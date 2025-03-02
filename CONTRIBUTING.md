@@ -19,10 +19,10 @@ git clone https://github.com/geldbuddies/geldbuddies.git
 # Navigeer naar de projectdirectory
 cd geldbuddies
 
-# Installeer afhankelijkheden
+# Installeer dependencies
 pnpm install
 
-# Start de ontwikkelingsserver
+# Start de development server
 pnpm dev
 ```
 
