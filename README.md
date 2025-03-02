@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GeldBuddies
+
+GeldBuddies is een educatief spelplatform ontworpen om financiële geletterdheid op een boeiende en interactieve manier aan studenten te leren.
+
+## Projectoverzicht
+
+De applicatie bestaat uit twee hoofdonderdelen:
+
+- Een website met informatie en bronnen over financiële geletterdheid
+- Een interactief spelgedeelte waar studenten kunnen leren door te spelen
+
+## Vereisten
+
+Voordat je begint, zorg ervoor dat je het volgende hebt geïnstalleerd:
+
+- Node.js (versie 18 of hoger)
+- PNPM (we gebruiken dit als onze package manager)
 
 ## Getting Started
 
-First, run the development server:
+1. Clone de repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/geldbuddies.git
+cd geldbuddies
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Installeer dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Start de development server:
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000) in je browser om het resultaat te zien.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Projectstructuur
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── (website)/         # Hoofdwebsite pagina's
+│   │   └── layout.tsx     # Layout voor normale pagina's
+│   ├── game/              # Spelgerelateerde pagina's
+│   │   └── layout.tsx     # Layout voor game pagina's
+│   ├── layout.tsx         # Root layout
+│   └── globals.css        # Globale styling
+├── components/            # Herbruikbare React-componenten
+│   └── navigation/        # Navigatiegerelateerde componenten
+```
 
-## Deploy on Vercel
+## Technologiestack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: Next.js 15.2
+- **Taal**: TypeScript
+- **Styling**: Tailwind CSS
+- **Package Manager**: PNPM
+- **Linting**: ESLint
+- **Development Server**: Turbopack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Bijdragen
+
+We verwelkomen bijdragen! Raadpleeg onze [Richtlijnen voor bijdragen](CONTRIBUTING.md) voor details over hoe je kunt beginnen.
+
+## Development Workflow
+
+1. Zorg ervoor dat je op de hoofdbranch bent en up-to-date:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+2. Maak een nieuwe branch voor je feature/fix:
+
+```bash
+git checkout -b feat/jouw-feature-naam
+```
+
+3. Maak je wijzigingen en commit met semantische commit-berichten:
+
+```bash
+git commit -m "feat(scope): beschrijving van wijzigingen"
+```
+
+4. Push je wijzigingen en maak een pull request:
+
+```bash
+git push origin feature/jouw-feature-naam
+```
+
+## Beschikbare scripts
+
+- `pnpm dev` - Start ontwikkelingsserver met Turbopack
+- `pnpm build` - Maak productie-build
+- `pnpm start` - Draai productieserver
+- `pnpm lint` - Voer ESLint uit voor codekwaliteit
+
+## Meer informatie
+
+Om meer te leren over de technologieën die we gebruiken:
+
+- [Next.js Documentatie](https://nextjs.org/docs) - Meer over Next.js functies
+- [TypeScript Documentatie](https://www.typescriptlang.org/docs/) - Meer over TypeScript
+- [Tailwind CSS Documentatie](https://tailwindcss.com/docs) - Meer over Tailwind CSS
