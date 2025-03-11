@@ -9,20 +9,10 @@ export function AboutCTASection() {
         Help ons om financiële educatie toegankelijker te maken voor jongeren.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button
-          asChild
-          variant="outline"
-          size="lg"
-          className="bg-background text-primary hover:bg-background/90"
-        >
+        <Button asChild variant="default" size="lg">
           <Link href="/game">Probeer de Game</Link>
         </Button>
-        <Button
-          asChild
-          variant="outline"
-          size="lg"
-          className="border-background text-background hover:bg-primary-foreground/10 hover:text-background"
-        >
+        <Button asChild variant="outline" size="lg">
           <Link href="/contact">Neem Contact Op</Link>
         </Button>
       </div>
