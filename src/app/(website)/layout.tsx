@@ -1,4 +1,5 @@
 import NavigationBar from '@/components/navigation/navigation-bar';
+import Link from 'next/link';
 import { Fragment } from 'react';
 
 export default function WebsiteLayout({ children }: { children: React.ReactNode }) {
@@ -21,24 +22,24 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
               <h3 className="text-lg font-bold mb-4">Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="/" className="text-primary dark:text-primary hover:underline">
+                  <Link href="/" className="text-primary dark:text-primary hover:underline">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about" className="text-primary dark:text-primary hover:underline">
+                  <Link href="/about" className="text-primary dark:text-primary hover:underline">
                     Over Ons
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/game" className="text-primary dark:text-primary hover:underline">
+                  <Link href="/game" className="text-primary dark:text-primary hover:underline">
                     Game
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/contact" className="text-primary dark:text-primary hover:underline">
+                  <Link href="/contact" className="text-primary dark:text-primary hover:underline">
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
