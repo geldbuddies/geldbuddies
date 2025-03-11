@@ -1,4 +1,13 @@
 import Link from 'next/link';
+import { NavItem, NavItemProps } from './nav-item';
+
+const navItems: NavItemProps[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Over Ons', href: '/about' },
+  { label: 'Game', href: '/game' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Start Nu', href: '/game', isButton: true, variant: 'default' },
+];
 
 export default function NavigationBar() {
   return (
@@ -11,47 +20,12 @@ export default function NavigationBar() {
             </Link>
           </div>
 
-          <ul className="flex items-center space-x-8">
-            <li>
-              <Link
-                href="/"
-                className="text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary font-medium"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/about"
-                className="text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary font-medium"
-              >
-                Over Ons
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/game"
-                className="text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary font-medium"
-              >
-                Game
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="text-foreground hover:text-primary dark:text-foreground dark:hover:text-primary font-medium"
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/game"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors"
-              >
-                Start Nu
-              </Link>
-            </li>
+          <ul className="flex items-center space-x-4">
+            {navItems.map((item, index) => (
+              <li key={`${item.href}-${index}`}>
+                <NavItem {...item} />
+              </li>
+            ))}
           </ul>
         </div>
       </div>
