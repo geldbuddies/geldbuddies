@@ -1,19 +1,34 @@
 import Link from 'next/link';
+import { NavItem, NavItemProps } from './nav-item';
+
+const navItems: NavItemProps[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Over Ons', href: '/about' },
+  { label: 'Game', href: '/game' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Start Nu', href: '/game', isButton: true, variant: 'default' },
+];
 
 export default function NavigationBar() {
   return (
-    <nav className="p-4">
-      <ul className="flex gap-4">
-        <li>
-          <Link href="/">Home</Link>
-        </li>
-        <li>
-          <Link href="/game">Game</Link>
-        </li>
-        <li>
-          <Link href="/contact">Contact</Link>
-        </li>
-      </ul>
+    <nav className="w-full bg-background dark:bg-background shadow-md">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <span className="text-2xl font-bold text-primary dark:text-primary">GeldBuddies</span>
+            </Link>
+          </div>
+
+          <ul className="flex items-center space-x-4">
+            {navItems.map((item, index) => (
+              <li key={`${item.href}-${index}`}>
+                <NavItem {...item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </nav>
   );
 }
