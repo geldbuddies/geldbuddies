@@ -1,3 +1,6 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -58,38 +61,44 @@ export default function AboutPage() {
         <h2 className="text-2xl font-bold mb-6">Onze Aanpak</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
-              1
-            </div>
-            <h3 className="text-xl font-bold mb-2">Educatief</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              We combineren financiële theorie met praktische toepassingen, zodat jongeren niet
-              alleen weten wat ze moeten doen, maar ook waarom.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
+                1
+              </div>
+              <CardTitle className="text-xl mb-2">Educatief</CardTitle>
+              <CardDescription className="text-base">
+                We combineren financiële theorie met praktische toepassingen, zodat jongeren niet
+                alleen weten wat ze moeten doen, maar ook waarom.
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
-              2
-            </div>
-            <h3 className="text-xl font-bold mb-2">Interactief</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Door actieve participatie en directe feedback leren gebruikers sneller en onthouden ze
-              de lesstof beter.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
+                2
+              </div>
+              <CardTitle className="text-xl mb-2">Interactief</CardTitle>
+              <CardDescription className="text-base">
+                Door actieve participatie en directe feedback leren gebruikers sneller en onthouden
+                ze de lesstof beter.
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
-              3
-            </div>
-            <h3 className="text-xl font-bold mb-2">Motiverend</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Met achievements, levels en uitdagingen houden we gebruikers gemotiveerd om te blijven
-              leren en groeien.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-xl font-bold text-primary dark:text-primary">
+                3
+              </div>
+              <CardTitle className="text-xl mb-2">Motiverend</CardTitle>
+              <CardDescription className="text-base">
+                Met achievements, levels en uitdagingen houden we gebruikers gemotiveerd om te
+                blijven leren en groeien.
+              </CardDescription>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -98,29 +107,35 @@ export default function AboutPage() {
         <h2 className="text-2xl font-bold mb-6">Voor Wie is GeldBuddies?</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-bold mb-2">Scholieren (16-18 jaar)</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Focus op basiskennis over budgetteren, sparen en eerste financiële
-              verantwoordelijkheden.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <CardTitle className="text-xl mb-2">Scholieren (16-18 jaar)</CardTitle>
+              <CardDescription className="text-base">
+                Focus op basiskennis over budgetteren, sparen en eerste financiële
+                verantwoordelijkheden.
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-bold mb-2">Studenten (18-25 jaar)</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Aandacht voor studiefinanciering, op kamers wonen, en het voorkomen van
-              studieschulden.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <CardTitle className="text-xl mb-2">Studenten (18-25 jaar)</CardTitle>
+              <CardDescription className="text-base">
+                Aandacht voor studiefinanciering, op kamers wonen, en het voorkomen van
+                studieschulden.
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-card dark:bg-card p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-bold mb-2">Docenten</h3>
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Tools om financiële educatie in de klas te integreren en de voortgang van leerlingen
-              te monitoren.
-            </p>
-          </div>
+          <Card className="p-0">
+            <CardContent className="p-6">
+              <CardTitle className="text-xl mb-2">Docenten</CardTitle>
+              <CardDescription className="text-base">
+                Tools om financiële educatie in de klas te integreren en de voortgang van leerlingen
+                te monitoren.
+              </CardDescription>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -131,19 +146,21 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Team member placeholders - replace with actual team members */}
           {[1, 2, 3, 4].map((member) => (
-            <div key={member} className="bg-card dark:bg-card p-6 rounded-lg shadow-md text-center">
-              <div className="w-24 h-24 bg-muted dark:bg-muted rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span className="text-muted-foreground dark:text-muted-foreground text-xl">
-                  Foto
-                </span>
-              </div>
-              <h3 className="text-xl font-bold mb-1">Teamlid {member}</h3>
-              <p className="text-muted-foreground dark:text-muted-foreground mb-3">Functie</p>
-              <p className="text-muted-foreground dark:text-muted-foreground text-sm">
-                Korte beschrijving van de rol en expertise van het teamlid binnen het GeldBuddies
-                project.
-              </p>
-            </div>
+            <Card key={member} className="p-0 text-center">
+              <CardContent className="p-6">
+                <div className="w-24 h-24 bg-muted dark:bg-muted rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-muted-foreground dark:text-muted-foreground text-xl">
+                    Foto
+                  </span>
+                </div>
+                <CardTitle className="text-xl mb-1">Teamlid {member}</CardTitle>
+                <p className="text-muted-foreground dark:text-muted-foreground mb-3">Functie</p>
+                <CardDescription className="text-sm">
+                  Korte beschrijving van de rol en expertise van het teamlid binnen het GeldBuddies
+                  project.
+                </CardDescription>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
@@ -155,18 +172,32 @@ export default function AboutPage() {
           Help ons om financiële educatie toegankelijker te maken voor jongeren.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="/game"
-            className="bg-background text-primary hover:bg-background/90 font-bold py-3 px-6 rounded-md inline-block"
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="bg-background text-primary hover:bg-background/90"
           >
-            Probeer de Game
-          </a>
-          <a
-            href="/contact"
-            className="bg-transparent border-2 border-background text-background hover:bg-primary-foreground/10 font-bold py-3 px-6 rounded-md inline-block"
+            <a
+              href="/game"
+              className="bg-background text-primary hover:bg-background/90 font-bold py-3 px-6 rounded-md inline-block"
+            >
+              Probeer de Game
+            </a>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-background text-background hover:bg-primary-foreground/10 hover:text-background"
           >
-            Neem Contact Op
-          </a>
+            <a
+              href="/contact"
+              className="bg-transparent border-2 border-background text-background hover:bg-primary-foreground/10 font-bold py-3 px-6 rounded-md inline-block"
+            >
+              Neem Contact Op
+            </a>
+          </Button>
         </div>
       </section>
     </div>

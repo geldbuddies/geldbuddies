@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 
 export default function ContactPage() {
@@ -200,20 +202,22 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold mb-6">Stuur ons een bericht</h2>
 
           {formStatus === 'success' ? (
-            <div className="bg-green-100 dark:bg-green-900/20 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-green-700 dark:text-green-300 mb-2">
-                Bericht verzonden!
-              </h3>
-              <p className="text-green-600 dark:text-green-400">
-                Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.
-              </p>
-              <button
-                onClick={() => setFormStatus('idle')}
-                className="mt-4 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md"
-              >
-                Nieuw bericht
-              </button>
-            </div>
+            <Card className="bg-green-100 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+              <CardContent className="p-6">
+                <CardTitle className="text-xl font-bold text-green-700 dark:text-green-300 mb-2">
+                  Bericht verzonden!
+                </CardTitle>
+                <CardDescription className="text-green-600 dark:text-green-400 text-base mb-4">
+                  Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.
+                </CardDescription>
+                <Button
+                  onClick={() => setFormStatus('idle')}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Nieuw bericht
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -281,7 +285,7 @@ export default function ContactPage() {
                 ></textarea>
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={formStatus === 'submitting'}
                 className={`w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-4 rounded-md transition-colors ${
@@ -289,7 +293,7 @@ export default function ContactPage() {
                 }`}
               >
                 {formStatus === 'submitting' ? 'Verzenden...' : 'Verstuur Bericht'}
-              </button>
+              </Button>
             </form>
           )}
         </div>
