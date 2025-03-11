@@ -8,12 +8,12 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
         <NavigationBar />
       </header>
       <main className="min-h-[calc(100vh-64px)]">{children}</main>
-      <footer className="bg-gray-100 dark:bg-gray-900 py-8">
+      <footer className="bg-muted dark:bg-muted py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-lg font-bold mb-4">GeldBuddies</h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 Leer op een leuke manier omgaan met geld en financiën.
               </p>
             </div>
@@ -21,22 +21,22 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
               <h3 className="text-lg font-bold mb-4">Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="/" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  <a href="/" className="text-primary dark:text-primary hover:underline">
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  <a href="/about" className="text-primary dark:text-primary hover:underline">
                     Over Ons
                   </a>
                 </li>
                 <li>
-                  <a href="/game" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  <a href="/game" className="text-primary dark:text-primary hover:underline">
                     Game
                   </a>
                 </li>
                 <li>
-                  <a href="/contact" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  <a href="/contact" className="text-primary dark:text-primary hover:underline">
                     Contact
                   </a>
                 </li>
@@ -44,7 +44,7 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
             </div>
             <div>
               <h3 className="text-lg font-bold mb-4">Contact</h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 Email: info@geldbuddies.nl
                 <br />
                 Hogeschool Utrecht
@@ -55,7 +55,7 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
               </p>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-400">
+          <div className="mt-8 pt-8 border-t border-border dark:border-border text-center text-muted-foreground dark:text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} GeldBuddies. Alle rechten voorbehouden.</p>
           </div>
         </div>

@@ -49,10 +49,10 @@ export default function ContactPage() {
 
           <div className="space-y-6">
             <div className="flex items-start">
-              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
+              <div className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -67,15 +67,17 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-1">Email</h3>
-                <p className="text-gray-600 dark:text-gray-400">info@geldbuddies.nl</p>
+                <p className="text-muted-foreground dark:text-muted-foreground">
+                  info@geldbuddies.nl
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
-              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
+              <div className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -96,7 +98,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-1">Adres</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-foreground dark:text-muted-foreground">
                   Hogeschool Utrecht
                   <br />
                   Padualaan 99
@@ -107,10 +109,10 @@ export default function ContactPage() {
             </div>
 
             <div className="flex items-start">
-              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
+              <div className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -125,7 +127,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-1">Openingstijden</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-foreground dark:text-muted-foreground">
                   Maandag - Vrijdag: 9:00 - 17:00
                   <br />
                   Weekend: Gesloten
@@ -139,11 +141,11 @@ export default function ContactPage() {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -152,11 +154,11 @@ export default function ContactPage() {
               </a>
               <a
                 href="#"
-                className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -165,11 +167,11 @@ export default function ContactPage() {
               </a>
               <a
                 href="#"
-                className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -178,11 +180,11 @@ export default function ContactPage() {
               </a>
               <a
                 href="#"
-                className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                className="bg-primary/10 dark:bg-primary/20 p-3 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  className="h-6 w-6 text-primary dark:text-primary"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -198,7 +200,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold mb-6">Stuur ons een bericht</h2>
 
           {formStatus === 'success' ? (
-            <div className="bg-green-100 dark:bg-green-900 p-6 rounded-lg">
+            <div className="bg-green-100 dark:bg-green-900/20 p-6 rounded-lg">
               <h3 className="text-xl font-bold text-green-700 dark:text-green-300 mb-2">
                 Bericht verzonden!
               </h3>
@@ -225,7 +227,7 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-input dark:border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
                 />
               </div>
 
@@ -240,7 +242,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-input dark:border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
                 />
               </div>
 
@@ -254,7 +256,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-input dark:border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
                 >
                   <option value="">Selecteer een onderwerp</option>
                   <option value="algemeen">Algemene vraag</option>
@@ -275,14 +277,14 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-input dark:border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
                 ></textarea>
               </div>
 
               <button
                 type="submit"
                 disabled={formStatus === 'submitting'}
-                className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md transition-colors ${
+                className={`w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-4 rounded-md transition-colors ${
                   formStatus === 'submitting' ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
