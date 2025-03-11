@@ -41,7 +41,11 @@ src/
 │   └── navigation/        # Navigatiegerelateerde componenten
 ```
 
-## Branch Naming Convention
+## Branch Management
+
+**BELANGRIJK: Directe commits en pushes naar de main branch zijn niet toegestaan.** Alle wijzigingen moeten via pull requests worden doorgevoerd.
+
+### Branch Naming Convention
 
 We volgen semantische branch-naamgeving om onze repository georganiseerd te houden:
 
@@ -51,9 +55,30 @@ We volgen semantische branch-naamgeving om onze repository georganiseerd te houd
 - `refactor/`: Voor code refactoring (bijv. `refactor/component-structure`)
 - `test/`: Voor het toevoegen of wijzigen van tests (bijv. `test/user-service`)
 
+### Workflow voor nieuwe wijzigingen
+
+Volg deze stappen voor het maken van wijzigingen:
+
+```bash
+# Controleer op welke branch je momenteel zit
+git branch
+
+# Ga naar de main branch
+git checkout main
+
+# Zorg ervoor dat je main branch up-to-date is
+git pull
+
+# Maak een nieuwe branch voor je wijzigingen
+git checkout -b feat/jouw-feature-naam
+
+# Verifieer dat je nieuwe branch succesvol is aangemaakt
+git branch
+```
+
 ## Commit Message Convention
 
-We volgen de Conventional Commits-specificatie voor commit-berichten:
+We volgen de Semantic Commits-specificatie voor commit-berichten:
 
 ```
 <type>(<optionele scope>): <description>
@@ -70,6 +95,7 @@ Types:
 - `docs`: Documentatiewijzigingen
 - `style`: Codesstijlwijzigingen (formattering, ontbrekende puntkomma's, etc.)
 - `refactor`: Code refactoring
+- `perf`: Performance verbeteringen
 - `test`: Toevoegen of wijzigen van tests
 - `chore`: Wijzigingen aan buildproces of hulpmiddelen
 
@@ -91,17 +117,14 @@ docs: update API documentation
 
 ## Wijzigingen aanbrengen
 
-1. Voor kleine wijzigingen (typefouten, kleine bugfixes):
+Voor alle wijzigingen, ongeacht de grootte:
 
-   - Kan je direct committen naar de main branch
-   - Houd de wijzigingen gericht en minimaal
-
-2. Voor grotere wijzigingen:
-   - Maak een nieuwe branch volgens de branch-naamgevingsconventie
-   - Maak je wijzigingen in logische commits
-   - Schrijf duidelijke commit-berichten volgens de conventie
-   - Update documentatie indien nodig
-   - Voeg tests toe of update deze indien nodig
+- Maak een nieuwe branch volgens de branch-naamgevingsconventie
+- Maak je wijzigingen in logische commits
+- Schrijf duidelijke commit-berichten volgens de conventie
+- Update documentatie indien nodig
+- Voeg tests toe of update deze indien nodig
+- Dien een pull request in voor review
 
 ## Codestijl
 

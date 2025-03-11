@@ -69,30 +69,65 @@ We verwelkomen bijdragen! Raadpleeg onze [Richtlijnen voor bijdragen](CONTRIBUTI
 
 ## Development Workflow
 
-1. Zorg ervoor dat je op de hoofdbranch bent en up-to-date:
+**BELANGRIJK: Directe commits en pushes naar de main branch zijn niet toegestaan.** Alle wijzigingen moeten via pull requests worden doorgevoerd.
+
+Volg deze stappen voor het maken van wijzigingen:
+
+1. Controleer op welke branch je momenteel zit:
+
+```bash
+git branch
+```
+
+2. Zorg ervoor dat je op de hoofdbranch bent en up-to-date:
 
 ```bash
 git checkout main
 git pull origin main
 ```
 
-2. Maak een nieuwe branch voor je feature/fix:
+3. Maak een nieuwe branch voor je feature/fix:
 
 ```bash
 git checkout -b feat/jouw-feature-naam
 ```
 
-3. Maak je wijzigingen en commit met semantische commit-berichten:
+4. Verifieer dat je nieuwe branch succesvol is aangemaakt:
+
+```bash
+git branch
+```
+
+5. Maak je wijzigingen en commit met semantische commit-berichten:
 
 ```bash
 git commit -m "feat(scope): beschrijving van wijzigingen"
 ```
 
-4. Push je wijzigingen en maak een pull request:
+6. Push je wijzigingen en maak een pull request:
 
 ```bash
-git push origin feature/jouw-feature-naam
+git push origin feat/jouw-feature-naam
 ```
+
+## Commit Message Format
+
+We volgen de Semantic Commits-specificatie voor commit-berichten:
+
+```
+<type>(<optionele scope>): <description>
+```
+
+Types:
+
+- `feat`: Een nieuwe feature
+- `fix`: Een bugfix
+- `docs`: Documentatiewijzigingen
+- `style`: Codesstijlwijzigingen
+- `refactor`: Code refactoring
+- `perf`: Performance verbeteringen
+- `test`: Toevoegen of wijzigen van tests
+- `chore`: Wijzigingen aan buildproces of hulpmiddelen
 
 ## Beschikbare scripts
 
