@@ -3,11 +3,9 @@ import { immer } from 'zustand/middleware/immer';
 
 export type HistoryEvent = {
   id: string;
-  type: 'transaction' | 'job' | 'asset' | 'life' | 'consumable';
-  subtype?: string;
+  type: 'transaction' | 'job' | 'asset' | 'good' | 'life';
   description: string;
   timestamp: number;
-  metadata?: Record<string, any>;
 };
 
 // Player slice types
@@ -16,15 +14,9 @@ export interface PlayerSlice {
     money: number;
     name: string;
     age: number;
-    stats: {
-      health: number;
-      happiness: number;
-      energy: number;
-    };
   };
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;
-  updateStat: (stat: string, value: number) => void;
 }
 
 // Jobs slice types
@@ -40,10 +32,9 @@ export interface JobsSlice {
       title: string;
       company: string;
       salary: number;
-      requirements?: Record<string, number>;
     }>;
   };
-  applyForJob: (jobId: string) => boolean;
+  applyForJob: (jobId: string) => void;
   quitJob: () => void;
   collectSalary: () => void;
 }
@@ -54,35 +45,34 @@ export interface AssetsSlice {
     owned: Array<{
       id: string;
       name: string;
-      type: 'property' | 'vehicle' | 'investment';
+      type: 'property';
       value: number;
       purchasePrice: number;
-      purchaseDate: number;
     }>;
   };
-  buyAsset: (asset: {
-    name: string;
-    type: 'property' | 'vehicle' | 'investment';
-    price: number;
-  }) => boolean;
+  buyAsset: (asset: { name: string; type: 'property'; price: number }) => boolean;
   sellAsset: (assetId: string) => boolean;
 }
 
-// Consumables slice types
-export interface ConsumablesSlice {
-  consumables: {
-    inventory: Array<{
+// Goods slice types
+export interface GoodsSlice {
+  goods: {
+    owned: Array<{
       id: string;
       name: string;
-      quantity: number;
-      effects: Record<string, number>;
+      purchasePrice: number;
+      resellValue: number;
+      monthlyCost: number; // 0 for items with no recurring cost
     }>;
   };
-  buyConsumable: (
-    consumable: { name: string; price: number; effects: Record<string, number> },
-    quantity?: number
-  ) => boolean;
-  useConsumable: (consumableId: string) => boolean;
+  buyGood: (good: {
+    name: string;
+    price: number;
+    resellValue: number;
+    monthlyCost: number;
+  }) => boolean;
+  sellGood: (goodId: string) => boolean;
+  payMonthlyCosts: () => void;
 }
 
 // History slice types
@@ -93,19 +83,23 @@ export interface HistorySlice {
   addHistoryEvent: (event: Omit<HistoryEvent, 'id' | 'timestamp'>) => void;
 }
 
-// Game actions slice types
-export interface GameActionsSlice {
-  advanceDay: () => void;
-  resetGame: () => void;
+// Time slice types
+export interface TimeSlice {
+  time: {
+    month: number;
+    year: number;
+    monthName: string;
+  };
+  advanceMonth: () => void;
 }
 
 // Combined store type
 export type GameStore = PlayerSlice &
   JobsSlice &
   AssetsSlice &
-  ConsumablesSlice &
+  GoodsSlice &
   HistorySlice &
-  GameActionsSlice;
+  TimeSlice;
 
 // Type for slice creators
 export type GameSlice<T> = StateCreator<GameStore, [['zustand/immer', never]], [], T>;

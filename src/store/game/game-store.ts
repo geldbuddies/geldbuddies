@@ -5,12 +5,12 @@ import { immer } from 'zustand/middleware/immer';
 
 // Import slices
 import { createAssetsSlice } from './slices/assets-slice';
-import { createConsumablesSlice } from './slices/consumables-slice';
-import { createGameActionsSlice } from './slices/game-actions-slice';
+import { createGoodsSlice } from './slices/goods-slice';
 import { createHistorySlice } from './slices/history-slice';
 import { createJobsSlice } from './slices/jobs-slice';
 import { createPlayerSlice } from './slices/player-slice';
-import { GameStore } from './slices/types';
+import { createTimeSlice } from './slices/time-slice';
+import { GameStore } from './types';
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
@@ -19,18 +19,19 @@ const useGameStore = create<GameStore>()(
       ...createPlayerSlice(...a),
       ...createJobsSlice(...a),
       ...createAssetsSlice(...a),
-      ...createConsumablesSlice(...a),
+      ...createGoodsSlice(...a),
       ...createHistorySlice(...a),
-      ...createGameActionsSlice(...a),
+      ...createTimeSlice(...a),
     })),
     {
-      name: 'bitlife-game-storage',
+      name: 'life-sim-storage',
       partialize: (state) => ({
         player: state.player,
         jobs: state.jobs,
         assets: state.assets,
-        consumables: state.consumables,
+        goods: state.goods,
         history: state.history,
+        time: state.time,
       }),
     }
   )

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { GameSlice, HistorySlice } from './types';
+import { GameSlice, HistorySlice } from '../types';
 
 export const createHistorySlice: GameSlice<HistorySlice> = (set) => ({
   history: {

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { AssetsSlice, GameSlice } from './types';
+import { AssetsSlice, GameSlice } from '../types';
 
 export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
   assets: {
@@ -15,16 +15,13 @@ export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
           type: asset.type,
           value: asset.price,
           purchasePrice: asset.price,
-          purchaseDate: Date.now(),
         });
       });
 
       // Add to history
       get().addHistoryEvent({
         type: 'asset',
-        subtype: 'purchase',
-        description: `Purchased ${asset.type} - ${asset.name} for $${asset.price.toLocaleString()}`,
-        metadata: { assetName: asset.name, assetType: asset.type, price: asset.price },
+        description: `Purchased ${asset.name} for $${asset.price.toLocaleString()}`,
       });
 
       return true;
@@ -49,14 +46,7 @@ export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
     // Add to history
     get().addHistoryEvent({
       type: 'asset',
-      subtype: 'sale',
-      description: `Sold ${asset.type} - ${asset.name} for $${asset.value.toLocaleString()}`,
-      metadata: {
-        assetName: asset.name,
-        assetType: asset.type,
-        price: asset.value,
-        profit: asset.value - asset.purchasePrice,
-      },
+      description: `Sold ${asset.name} for $${asset.value.toLocaleString()}`,
     });
 
     return true;
