@@ -2,10 +2,10 @@
 
 import { TimeDisplay } from '@/components/game/time-display';
 import { Button } from '@/components/ui/button';
-import { useGame } from '@/hooks/use-game';
+import { useGameStore } from '@/store/game-store';
 
 export default function GamePage() {
-  const { resetGame } = useGame();
+  const { resetGame } = useGameStore();
 
   return (
     <div className="container mx-auto p-4">
