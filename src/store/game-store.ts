@@ -1,50 +1,21 @@
+import { calculateTotalExpenses, calculateTotalIncome } from '@/features/finance';
+import { nextMonth } from '@/features/time';
+import { Asset, Consumable, GameState, Job } from '@/types/game';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface Job {
-  id: string;
-  title: string;
-  income: number;
-}
-
-interface Possession {
-  id: string;
-  name: string;
-  category: 'housing' | 'transport' | 'utility' | 'subscription' | 'other';
-  monthlyCost: number;
-}
-
-interface GameState {
-  // Player information
-  birthMonth: number;
-  birthYear: number;
-
-  // Player finances
-  money: number;
-  jobs: Job[];
-  possessions: Possession[];
-
-  // Time
-  month: number;
-  year: number;
-
-  // Assets
-  assets: Array<{ id: string; name: string; value: number }>;
-
-  // Game state
-  events: Array<{ id: string; seen: boolean }>;
-}
-
 interface GameActions {
   // Basic setters for each state property
-  updateMoney: (value: number) => void;
+  setMoney: (value: number) => void;
+  reduceMoney: (value: number) => void;
+  increaseMoney: (value: number) => void;
   setBirthDate: (month: number, year: number) => void;
   addJob: (job: Job) => void;
   removeJob: (id: string) => void;
-  addPossession: (possession: Possession) => void;
-  removePossession: (id: string) => void;
-  addAsset: (asset: { id: string; name: string; value: number }) => void;
+  addAsset: (asset: Asset) => void;
   removeAsset: (id: string) => void;
+  addConsumable: (consumable: Consumable) => void;
+  removeConsumable: (id: string) => void;
   advanceMonth: () => void;
   resetGame: () => void;
 }
@@ -56,13 +27,12 @@ const initialState: GameState = {
 
   money: 1000,
   jobs: [{ id: '1', title: 'Entry Level Job', income: 1500 }],
-  possessions: [
-    { id: '1', name: 'Studio Apartment', category: 'housing', monthlyCost: 500 },
-    { id: '2', name: 'Basic Groceries', category: 'other', monthlyCost: 300 },
+  assets: [
+    { id: '1', name: 'Studio Apartment', category: 'housing', value: 50000, monthlyCost: 500 },
   ],
+  consumables: [{ id: '1', name: 'Basic Groceries', category: 'food', monthlyCost: 300 }],
   month: 1,
   year: 2023,
-  assets: [],
   events: [],
 };
 
@@ -71,7 +41,11 @@ export const useGameStore = create<GameState & GameActions>()(
     (set) => ({
       ...initialState,
 
-      updateMoney: (value) => set({ money: value }),
+      setMoney: (value) => set({ money: value }),
+
+      reduceMoney: (value) => set((state) => ({ money: state.money - value })),
+
+      increaseMoney: (value) => set((state) => ({ money: state.money + value })),
 
       setBirthDate: (month, year) => set({ birthMonth: month, birthYear: year }),
 
@@ -85,16 +59,6 @@ export const useGameStore = create<GameState & GameActions>()(
           jobs: state.jobs.filter((job) => job.id !== id),
         })),
 
-      addPossession: (possession) =>
-        set((state) => ({
-          possessions: [...state.possessions, possession],
-        })),
-
-      removePossession: (id) =>
-        set((state) => ({
-          possessions: state.possessions.filter((possession) => possession.id !== id),
-        })),
-
       addAsset: (asset) =>
         set((state) => ({
           assets: [...state.assets, asset],
@@ -105,26 +69,28 @@ export const useGameStore = create<GameState & GameActions>()(
           assets: state.assets.filter((asset) => asset.id !== id),
         })),
 
+      addConsumable: (consumable) =>
+        set((state) => ({
+          consumables: [...state.consumables, consumable],
+        })),
+
+      removeConsumable: (id) =>
+        set((state) => ({
+          consumables: state.consumables.filter((consumable) => consumable.id !== id),
+        })),
+
       advanceMonth: () =>
         set((state) => {
-          const newMonth = state.month === 12 ? 1 : state.month + 1;
-          const newYear = newMonth === 1 ? state.year + 1 : state.year;
+          const { month, year } = nextMonth(state.month, state.year);
 
-          // Calculate total income from all jobs
-          const monthlyIncome = state.jobs.reduce((total, job) => total + job.income, 0);
+          const income = calculateTotalIncome(state.jobs);
 
-          // Calculate total expenses from all possessions
-          const monthlyExpenses = state.possessions.reduce(
-            (total, possession) => total + possession.monthlyCost,
-            0
-          );
-
-          const newMoney = state.money + monthlyIncome - monthlyExpenses;
+          const expenses = calculateTotalExpenses(state.assets, state.consumables);
 
           return {
-            month: newMonth,
-            year: newYear,
-            money: newMoney,
+            month,
+            year,
+            money: state.money + income - expenses,
           };
         }),
 
