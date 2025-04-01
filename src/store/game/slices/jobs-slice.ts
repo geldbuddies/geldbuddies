@@ -6,20 +6,20 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
     availableJobs: [
       {
         id: '1',
-        title: 'Retail Clerk',
-        company: 'MegaMart',
+        title: 'Winkelmedewerker',
+        company: 'SuperMarkt',
         salary: 25000,
       },
       {
         id: '2',
-        title: 'Office Assistant',
-        company: 'Corporate Inc.',
+        title: 'Kantoorassistent',
+        company: 'Zakelijk B.V.',
         salary: 35000,
       },
       {
         id: '3',
-        title: 'Software Developer',
-        company: 'Tech Innovations',
+        title: 'Software Ontwikkelaar',
+        company: 'Tech Innovaties',
         salary: 80000,
       },
     ],
@@ -40,7 +40,7 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
     // Add to history
     get().addHistoryEvent({
       type: 'job',
-      description: `Started new job as ${job.title} at ${job.company}`,
+      description: `Nieuwe baan gestart als ${job.title} bij ${job.company}`,
     });
   },
 
@@ -55,7 +55,7 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       // Add to history
       get().addHistoryEvent({
         type: 'job',
-        description: `Quit job as ${currentJob.title} at ${currentJob.company}`,
+        description: `Ontslag genomen als ${currentJob.title} bij ${currentJob.company}`,
       });
     }
   },
@@ -65,7 +65,14 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
 
     if (currentJob) {
       const monthlySalary = Math.round(currentJob.salary / 12);
-      get().addMoney(monthlySalary, `Salary from ${currentJob.company}`);
+      get().addMoney(monthlySalary, `Salaris van ${currentJob.company}`);
+
+      // Add to history
+      get().addHistoryEvent({
+        type: 'transaction',
+        description: `Salaris ontvangen van ${currentJob.company}`,
+        amount: monthlySalary,
+      });
     }
   },
 });

@@ -4,49 +4,56 @@ export const createTimeSlice: GameSlice<TimeSlice> = (set, get) => ({
   time: {
     month: 1,
     year: 2025,
-    monthName: 'January',
+    monthName: 'Januari',
   },
 
-  advanceMonth: () =>
+  advanceMonth: () => {
+    // Get current state for updating
+    const prevState = get().time;
+    let newMonth = prevState.month + 1;
+    let newYear = prevState.year;
+
+    // Handle year rollover
+    if (newMonth > 12) {
+      newMonth = 1;
+      newYear += 1;
+    }
+
+    // Calculate month name
+    const monthNames = [
+      'Januari',
+      'Februari',
+      'Maart',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Augustus',
+      'September',
+      'Oktober',
+      'November',
+      'December',
+    ];
+    const newMonthName = monthNames[newMonth - 1];
+
+    // Update the time state
     set((state) => {
-      // Increment month
-      state.time.month += 1;
+      state.time.month = newMonth;
+      state.time.year = newYear;
+      state.time.monthName = newMonthName;
+    });
 
-      // Handle year rollover
-      if (state.time.month > 12) {
-        state.time.month = 1;
-        state.time.year += 1;
-      }
+    get().collectSalary();
 
-      // Update month name
-      const monthNames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ];
-      state.time.monthName = monthNames[state.time.month - 1];
+    get().payMonthlyCosts();
 
-      // Process monthly events
-
-      // 1. Collect salary
-      get().collectSalary();
-
-      // 2. Process monthly costs for goods
-      get().payMonthlyCosts();
-
-      // 3. Record the month passing
+    // Age player if it's their birthmonth
+    if (newMonth === get().player.birthMonth) {
       get().addHistoryEvent({
         type: 'life',
-        description: `Advanced to ${state.time.monthName} ${state.time.year}`,
+        description: 'Je bent jarig geworden!',
+        amount: 100,
       });
-    }),
+    }
+  },
 });

@@ -7,7 +7,7 @@ export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
   },
 
   buyAsset: (asset) => {
-    if (get().spendMoney(asset.price, `Purchased ${asset.name}`)) {
+    if (get().spendMoney(asset.price, `${asset.name} gekocht`)) {
       set((state) => {
         state.assets.owned.push({
           id: uuidv4(),
@@ -21,7 +21,8 @@ export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
       // Add to history
       get().addHistoryEvent({
         type: 'asset',
-        description: `Purchased ${asset.name} for $${asset.price.toLocaleString()}`,
+        description: `${asset.name} gekocht`,
+        amount: -asset.price,
       });
 
       return true;
@@ -41,12 +42,13 @@ export const createAssetsSlice: GameSlice<AssetsSlice> = (set, get) => ({
     });
 
     // Add money from sale
-    get().addMoney(asset.value, `Sold ${asset.name}`);
+    get().addMoney(asset.value, `${asset.name} verkocht`);
 
     // Add to history
     get().addHistoryEvent({
       type: 'asset',
-      description: `Sold ${asset.name} for $${asset.value.toLocaleString()}`,
+      description: `${asset.name} verkocht`,
+      amount: asset.value,
     });
 
     return true;

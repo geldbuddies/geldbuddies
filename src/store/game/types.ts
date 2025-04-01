@@ -5,6 +5,7 @@ export type HistoryEvent = {
   id: string;
   type: 'transaction' | 'job' | 'asset' | 'good' | 'life';
   description: string;
+  amount?: number;
   timestamp: number;
 };
 
@@ -13,7 +14,8 @@ export interface PlayerSlice {
   player: {
     money: number;
     name: string;
-    age: number;
+    birthMonth: number;
+    birthYear: number;
   };
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;

@@ -8,7 +8,7 @@ export const createGoodsSlice: GameSlice<GoodsSlice> = (set, get) => ({
   },
 
   buyGood: (good) => {
-    if (get().spendMoney(good.price, `Purchased ${good.name}`)) {
+    if (get().spendMoney(good.price, `${good.name} gekocht`)) {
       set((state) => {
         state.goods.owned.push({
           id: uuidv4(),
@@ -22,7 +22,8 @@ export const createGoodsSlice: GameSlice<GoodsSlice> = (set, get) => ({
       // Add to history
       get().addHistoryEvent({
         type: 'good',
-        description: `Purchased ${good.name} for $${good.price.toLocaleString()}`,
+        description: `${good.name} gekocht`,
+        amount: -good.price,
       });
 
       return true;
@@ -42,12 +43,13 @@ export const createGoodsSlice: GameSlice<GoodsSlice> = (set, get) => ({
     });
 
     // Add money from sale
-    get().addMoney(good.resellValue, `Sold ${good.name}`);
+    get().addMoney(good.resellValue, `${good.name} verkocht`);
 
     // Add to history
     get().addHistoryEvent({
       type: 'good',
-      description: `Sold ${good.name} for $${good.resellValue.toLocaleString()}`,
+      description: `${good.name} verkocht`,
+      amount: good.resellValue,
     });
 
     return true;
@@ -62,12 +64,18 @@ export const createGoodsSlice: GameSlice<GoodsSlice> = (set, get) => ({
     goods.forEach((good) => {
       if (good.monthlyCost > 0) {
         totalMonthlyCosts += good.monthlyCost;
-        itemizedCosts.push(`${good.name}: $${good.monthlyCost}`);
+        itemizedCosts.push(`${good.name}: €${good.monthlyCost}`);
       }
     });
 
     if (totalMonthlyCosts > 0) {
-      get().spendMoney(totalMonthlyCosts, `Monthly costs (${itemizedCosts.join(', ')})`);
+      get().spendMoney(totalMonthlyCosts, `Maandelijkse kosten (${itemizedCosts.join(', ')})`);
+
+      get().addHistoryEvent({
+        type: 'good',
+        description: `Maandelijkse kosten (${itemizedCosts.join(', ')})`,
+        amount: -totalMonthlyCosts,
+      });
     }
   },
 });

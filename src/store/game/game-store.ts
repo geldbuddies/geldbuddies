@@ -14,27 +14,14 @@ import { GameStore } from './types';
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  persist(
-    immer((...a) => ({
-      ...createPlayerSlice(...a),
-      ...createJobsSlice(...a),
-      ...createAssetsSlice(...a),
-      ...createGoodsSlice(...a),
-      ...createHistorySlice(...a),
-      ...createTimeSlice(...a),
-    })),
-    {
-      name: 'life-sim-storage',
-      partialize: (state) => ({
-        player: state.player,
-        jobs: state.jobs,
-        assets: state.assets,
-        goods: state.goods,
-        history: state.history,
-        time: state.time,
-      }),
-    }
-  )
+  immer((...a) => ({
+    ...createPlayerSlice(...a),
+    ...createJobsSlice(...a),
+    ...createAssetsSlice(...a),
+    ...createGoodsSlice(...a),
+    ...createHistorySlice(...a),
+    ...createTimeSlice(...a),
+  }))
 );
 
 export default useGameStore;

@@ -3,19 +3,16 @@ import { GameSlice, PlayerSlice } from '../types';
 export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
   player: {
     money: 5000,
-    name: 'Player',
-    age: 25,
+    name: 'Speler',
+    birthMonth: 1,
+    birthYear: 2006,
   },
 
   addMoney: (amount, reason) => {
+    console.log('addMoney', amount, reason);
+
     set((state) => {
       state.player.money += amount;
-    });
-
-    // Add to history
-    get().addHistoryEvent({
-      type: 'transaction',
-      description: `Received $${amount.toLocaleString()} - ${reason}`,
     });
   },
 
@@ -23,12 +20,6 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
     if (get().player.money >= amount) {
       set((state) => {
         state.player.money -= amount;
-      });
-
-      // Add to history
-      get().addHistoryEvent({
-        type: 'transaction',
-        description: `Spent $${amount.toLocaleString()} - ${reason}`,
       });
 
       return true;
