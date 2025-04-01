@@ -16,7 +16,14 @@ export interface PlayerSlice {
     name: string;
     birthMonth: number;
     birthYear: number;
+    isInitialized: boolean;
   };
+  initializePlayer: (playerData: {
+    money: number;
+    name: string;
+    birthMonth: number;
+    birthYear: number;
+  }) => void;
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;
 }
@@ -101,7 +108,9 @@ export type GameStore = PlayerSlice &
   AssetsSlice &
   GoodsSlice &
   HistorySlice &
-  TimeSlice;
+  TimeSlice & {
+    resetGame: () => void;
+  };
 
 // Type for slice creators
 export type GameSlice<T> = StateCreator<GameStore, [['zustand/immer', never]], [], T>;

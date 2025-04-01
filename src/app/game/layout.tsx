@@ -7,7 +7,9 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   return (
     <SidebarProvider className="fixed inset-0">
       <SidebarLeft />
-      <SidebarInset className="flex h-svh max-h-svh mb-8 overflow-auto">{children}</SidebarInset>
+      <SidebarInset className="inset-shadow-sm p-2 flex h-svh max-h-svh mb-8 overflow-auto">
+        {children}
+      </SidebarInset>
       <SidebarRight />
     </SidebarProvider>
   );

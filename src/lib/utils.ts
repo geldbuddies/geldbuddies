@@ -23,3 +23,16 @@ export function formatDate(month: number, year: number) {
 
   return `${months[month - 1]} ${year}`;
 }
+
+export function calculateAge(
+  birthMonth: number,
+  birthYear: number,
+  currentMonth: number,
+  currentYear: number
+) {
+  if (currentMonth < birthMonth) {
+    return currentYear - birthYear - 1;
+  }
+
+  return currentYear - birthYear;
+}

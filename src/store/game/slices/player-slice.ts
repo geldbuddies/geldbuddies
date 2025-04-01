@@ -2,10 +2,23 @@ import { GameSlice, PlayerSlice } from '../types';
 
 export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
   player: {
-    money: 5000,
-    name: 'Speler',
+    money: 0,
+    name: '',
     birthMonth: 1,
-    birthYear: 2006,
+    birthYear: 2000,
+    isInitialized: false,
+  },
+
+  initializePlayer: (playerData) => {
+    set((state) => {
+      state.player = {
+        money: playerData.money,
+        name: playerData.name,
+        birthMonth: playerData.birthMonth,
+        birthYear: playerData.birthYear,
+        isInitialized: true,
+      };
+    });
   },
 
   addMoney: (amount, reason) => {

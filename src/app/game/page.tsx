@@ -1,13 +1,16 @@
 'use client';
 
+import { CharacterSelect } from '@/components/game/character-select';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { calculateAge } from '@/lib/utils';
 import useGameStore from '@/store/game/game-store';
 import { useEffect } from 'react';
 
 export default function GamePage() {
-  const { player, jobs, assets, goods, time } = useGameStore();
+  const { player, jobs, assets, goods, time, resetGame } = useGameStore();
 
   // Initialize history on first render if empty
   useEffect(() => {
@@ -37,18 +40,37 @@ export default function GamePage() {
     return goods.owned.reduce((total, good) => total + good.monthlyCost, 0);
   };
 
+  // Handle game reset
+  const handleReset = () => {
+    if (confirm('Weet je zeker dat je opnieuw wilt beginnen? Alle voortgang gaat verloren.')) {
+      resetGame();
+    }
+  };
+
+  // If player is not initialized, show the character select screen
+  if (!player.isInitialized) {
+    return <CharacterSelect />;
+  }
+
+  // Otherwise, show the game content
   return (
     <div className="container mx-auto p-6 h-full">
       <div className="grid grid-cols-1 gap-6">
         {/* Player Information */}
         <Card className="sticky top-6">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">
-              {player.name}, {time.year - player.birthYear} jaar
-            </CardTitle>
-            <p className="text-muted-foreground">
-              {time.monthName} {time.year}
-            </p>
+          <CardHeader className="pb-2 flex flex-row justify-between">
+            <div>
+              <CardTitle className="text-2xl">
+                {player.name},{' '}
+                {calculateAge(player.birthMonth, player.birthYear, time.month, time.year)} jaar
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {time.monthName} {time.year}
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleReset} className="self-start">
+              Opnieuw beginnen
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

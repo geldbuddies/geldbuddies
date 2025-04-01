@@ -12,16 +12,77 @@ import { createPlayerSlice } from './slices/player-slice';
 import { createTimeSlice } from './slices/time-slice';
 import { GameStore } from './types';
 
+// Function to reset the game
+const resetGame = (set: any) => ({
+  resetGame: () => {
+    set(
+      {
+        player: {
+          money: 0,
+          name: '',
+          birthMonth: 1,
+          birthYear: 2000,
+          isInitialized: false,
+        },
+        jobs: {
+          currentJob: null,
+          availableJobs: [
+            {
+              id: '1',
+              title: 'Winkelmedewerker',
+              company: 'SuperMarkt',
+              salary: 25000,
+            },
+            {
+              id: '2',
+              title: 'Kantoorassistent',
+              company: 'Zakelijk B.V.',
+              salary: 35000,
+            },
+            {
+              id: '3',
+              title: 'Software Ontwikkelaar',
+              company: 'Tech Innovaties',
+              salary: 80000,
+            },
+          ],
+        },
+        assets: {
+          owned: [],
+        },
+        goods: {
+          owned: [],
+        },
+        history: {
+          events: [],
+        },
+        time: {
+          month: 1,
+          year: 2025,
+          monthName: 'Januari',
+        },
+      },
+      true
+    );
+  },
+});
+
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  immer((...a) => ({
-    ...createPlayerSlice(...a),
-    ...createJobsSlice(...a),
-    ...createAssetsSlice(...a),
-    ...createGoodsSlice(...a),
-    ...createHistorySlice(...a),
-    ...createTimeSlice(...a),
-  }))
+  persist(
+    immer((...a) => ({
+      ...createPlayerSlice(...a),
+      ...createJobsSlice(...a),
+      ...createAssetsSlice(...a),
+      ...createGoodsSlice(...a),
+      ...createHistorySlice(...a),
+      ...createTimeSlice(...a),
+      ...resetGame(a[0]),
+    })),
+    {
+      name: 'geldbuddies-game-storage',
+    }
+  )
 );
 
 export default useGameStore;
