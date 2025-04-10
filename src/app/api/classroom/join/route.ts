@@ -40,14 +40,31 @@ export async function POST(req: NextRequest) {
     let playerRecord;
     let userId;
     let finalDisplayName = displayName || 'Test Player';
+    let browserUniqueId: string | undefined;
 
     // Development mode: Create test player if needed
     if (process.env.NODE_ENV === 'development') {
-      // Generate a unique identifier for this browser session
-      const browserId = req.headers.get('user-agent') || Math.random().toString(36).substring(2, 15);
-      const testEmail = `player-${browserId.substring(0, 10).replace(/[^a-zA-Z0-9]/g, '')}@example.com`;
+      // Get or create a unique browser ID from cookies
+      browserUniqueId = req.cookies.get('browser_id')?.value;
       
-      // Look for existing player with this browser fingerprint
+      // If no cookie exists, create a new unique ID
+      if (!browserUniqueId) {
+        // Generate a completely random ID
+        browserUniqueId = Math.random().toString(36).substring(2, 15) + 
+                          Math.random().toString(36).substring(2, 15) +
+                          Date.now().toString(36);
+      }
+      
+      // Add some randomness from the user agent too
+      const userAgent = req.headers.get('user-agent') || '';
+      const agentHash = userAgent.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0).toString(36);
+      
+      // Create a unique email based on this browser ID
+      const testEmail = `player-${browserUniqueId.substring(0, 8)}-${agentHash.substring(0, 4)}@example.com`;
+      
+      console.log(`Creating/finding player with email: ${testEmail}`);
+      
+      // Look for existing player with this unique ID
       const testUser = await db.query.users.findFirst({
         where: eq(users.email, testEmail),
       });
@@ -55,7 +72,7 @@ export async function POST(req: NextRequest) {
       if (!testUser) {
         // Create a unique test player user for this browser
         const [newUser] = await db.insert(users).values({
-          name: `Test Player (${browserId.substring(0, 5)})`,
+          name: `Player ${browserUniqueId.substring(0, 5).toUpperCase()}`,
           email: testEmail,
           password: 'password',
           role: 'player'
@@ -86,6 +103,19 @@ export async function POST(req: NextRequest) {
       
       // Use the provided display name or a generated one
       finalDisplayName = displayName || `Player ${playerRecord.id}`;
+      
+      // Create a response that will be returned later
+      const response = NextResponse.next();
+      
+      // Set the browser_id cookie if it doesn't exist yet
+      if (!req.cookies.get('browser_id')) {
+        response.cookies.set('browser_id', browserUniqueId, { 
+          maxAge: 60 * 60 * 24 * 365, // 1 year
+          path: '/',
+          httpOnly: true,
+          sameSite: 'strict'
+        });
+      }
     } else {
       // Production mode: Use authentication
       const session = await getServerSession(authOptions);
@@ -132,11 +162,24 @@ export async function POST(req: NextRequest) {
         // Get all active participants in this classroom
         const participants = await getClassroomParticipants(classroomSession.id);
         
-        return NextResponse.json({ 
+        // Create response
+        const response = NextResponse.json({ 
           message: 'Already joined this classroom',
           classroom: classroomSession,
           participants
         });
+        
+        // Set the browser_id cookie if needed
+        if (process.env.NODE_ENV === 'development' && !req.cookies.get('browser_id') && browserUniqueId) {
+          response.cookies.set('browser_id', browserUniqueId, { 
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict'
+          });
+        }
+        
+        return response;
       } else {
         // Reactivate the participant
         await db.update(classroomParticipants)
@@ -150,11 +193,24 @@ export async function POST(req: NextRequest) {
         // Get all active participants in this classroom
         const participants = await getClassroomParticipants(classroomSession.id);
         
-        return NextResponse.json({ 
+        // Create response
+        const response = NextResponse.json({ 
           message: 'Rejoined classroom successfully',
           classroom: classroomSession,
           participants
         });
+        
+        // Set the browser_id cookie if needed
+        if (process.env.NODE_ENV === 'development' && !req.cookies.get('browser_id') && browserUniqueId) {
+          response.cookies.set('browser_id', browserUniqueId, { 
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict'
+          });
+        }
+        
+        return response;
       }
     }
 
@@ -183,11 +239,24 @@ export async function POST(req: NextRequest) {
     // Get all active participants in this classroom
     const participants = await getClassroomParticipants(classroomSession.id);
 
-    return NextResponse.json({ 
+    // Create the response
+    const response = NextResponse.json({ 
       message: 'Joined classroom successfully',
       classroom: classroomSession,
       participants
     });
+
+    // Set the browser_id cookie if in development mode and it doesn't exist yet
+    if (process.env.NODE_ENV === 'development' && !req.cookies.get('browser_id') && browserUniqueId) {
+      response.cookies.set('browser_id', browserUniqueId, { 
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict'
+      });
+    }
+
+    return response;
   } catch (error) {
     console.error('Error joining classroom:', error);
     return NextResponse.json({ 

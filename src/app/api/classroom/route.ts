@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
         
         if (teacherRecord) {
           classrooms = await db.query.classroomSessions.findMany({
-            where: eq(classroomSessions.teacherId, teacherRecord.id),
+            where: eq(classroomSessions.teacherId, teacherRecord.id)
           });
         } else {
           // If no teacher record found but user is authenticated

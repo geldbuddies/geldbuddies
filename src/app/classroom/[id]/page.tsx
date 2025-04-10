@@ -54,6 +54,14 @@ export default function ClassroomPage() {
       }
       
       const data = await response.json();
+      
+      // Check if user has been removed from the classroom
+      if (data.shouldRedirect === true) {
+        console.log('User has been removed from the classroom, redirecting to homepage');
+        router.push('/');
+        return;
+      }
+      
       setClassroom(data.classroom);
       setParticipants(data.participants);
       setError(null);
@@ -64,7 +72,7 @@ export default function ClassroomPage() {
       setRefreshing(false);
       setLoading(false);
     }
-  }, [id]);
+  }, [id, router]);
 
   // Function to handle manual refresh
   const handleManualRefresh = () => {

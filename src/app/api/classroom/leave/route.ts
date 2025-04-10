@@ -23,9 +23,19 @@ export async function POST(req: NextRequest) {
 
     // Development mode logic
     if (process.env.NODE_ENV === 'development') {
-      // Generate the same browser fingerprint as in the join route
-      const browserId = req.headers.get('user-agent') || Math.random().toString(36).substring(2, 15);
-      const testEmail = `player-${browserId.substring(0, 10).replace(/[^a-zA-Z0-9]/g, '')}@example.com`;
+      // Get browser ID from cookie
+      const browserUniqueId = req.cookies.get('browser_id')?.value;
+      
+      if (!browserUniqueId) {
+        return NextResponse.json({ error: 'Browser ID not found. You may need to join a classroom first.' }, { status: 404 });
+      }
+      
+      // Add some randomness from the user agent too
+      const userAgent = req.headers.get('user-agent') || '';
+      const agentHash = userAgent.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0).toString(36);
+      
+      // Create the same unique email used when joining
+      const testEmail = `player-${browserUniqueId.substring(0, 8)}-${agentHash.substring(0, 4)}@example.com`;
       
       // Find the user with this browser fingerprint
       const testUser = await db.query.users.findFirst({

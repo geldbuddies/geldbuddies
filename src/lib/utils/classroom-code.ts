@@ -1,15 +1,16 @@
 /**
- * Generates a random classroom code of the specified length
- * @param length The length of the code, defaults to 6
- * @returns A random alphanumeric code (uppercase letters and numbers only)
+ * Generates a random classroom code of 6-8 characters
+ * @returns A random classroom code (uppercase alphanumeric)
  */
-export function generateClassroomCode(length = 6): string {
-  const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluding confusing characters like 0, 1, I, O
-  let code = '';
+export function generateClassroomCode(): string {
+  // Define characters to use in the code (avoiding similar looking chars like O/0, I/1, etc.)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const codeLength = 6; // 6 character code
   
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    code += characters.charAt(randomIndex);
+  let code = '';
+  for (let i = 0; i < codeLength; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    code += chars.charAt(randomIndex);
   }
   
   return code;
