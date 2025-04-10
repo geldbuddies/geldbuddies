@@ -13,15 +13,15 @@
       "money": 5000,
       "savings": 1500,
       "investments": 10000,
-      "loans": 45000,
-      "debts": 2000
+      "loans": -450000,
+      "debts": -20000
     },
     "end": {
       "money": 15000,
       "savings": 50000,
       "investments": 150000,
-      "loans": 0,
-      "debts": 0
+      "loans": -30000,
+      "debts": -1000
     }
   },
   "monthlyExpenditures": {
