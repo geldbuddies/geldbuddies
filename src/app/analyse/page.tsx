@@ -34,17 +34,17 @@ export default function AnalysePage() {
                             <p>
                                 Final Score:{" "}
                                 <span className={getStyleForScore(item.finalScore)}>
-                                    {item.finalScore}%
+                                    {item.finalScore.toFixed(2)}%
                                 </span>
                             </p>
                             <p className="text-sm text-gray-600">
-                                Progress Score: {item.details.progressScore} | Target Score: {item.details.targetScore}
+                                Progress Score: {item.details.progressScore.toFixed(2)} | Target Score: {item.details.targetScore.toFixed(2)}
                             </p>
                             <p className="text-sm text-gray-600">
-                                Weighted Score: {item.details.weightedScore} | Domain Weight: {item.details.domainWeight}
+                                Weighted Score: {item.details.weightedScore.toFixed(2)} | Domain Weight: {item.details.domainWeight.toFixed(2)}
                             </p>
                             <p className="text-sm text-gray-600">
-                                Absolute Change: {item.metadata.absoluteChange} | Percentage Change: {item.metadata.percentageChange}%
+                                Absolute Change: {item.metadata.absoluteChange.toFixed(2)} | Percentage Change: {item.metadata.percentageChange.toFixed(2)}%
                             </p>
                         </div>
                     ))}
