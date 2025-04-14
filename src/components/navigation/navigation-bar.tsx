@@ -7,6 +7,8 @@ const navItems: NavItemProps[] = [
   { label: 'Game', href: '/game' },
   { label: 'Contact', href: '/contact' },
   { label: 'Start Nu', href: '/game', isButton: true, variant: 'default' },
+  { label: 'Join Class', href: '/join', isButton: true, variant: 'outline' },
+  { label: 'Debug', href: '/debug' },
 ];
 
 export default function NavigationBar() {

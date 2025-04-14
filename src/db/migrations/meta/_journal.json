@@ -1,12 +1,19 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
+  "version": "5",
+  "dialect": "pg",
   "entries": [
     {
       "idx": 0,
-      "version": "7",
-      "when": 1743669610925,
+      "version": "5",
+      "when": 1714562329483,
       "tag": "0000_damp_sasquatch",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714653421000,
+      "tag": "0001_classroom_system",
       "breakpoints": true
     }
   ]
