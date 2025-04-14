@@ -1,4 +1,4 @@
-# GeldBuddies
+# GeldBuddies test
 
 GeldBuddies is een educatief spelplatform ontworpen om financiële geletterdheid op een boeiende en interactieve manier aan studenten te leren.
 
