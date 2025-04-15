@@ -18,6 +18,9 @@ export function HeroSection() {
               <Button asChild variant="outline" size="lg">
                 <Link href="/game">Start de Game</Link>
               </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/join">Join Classroom</Link>
+              </Button>
               <Button asChild variant="default" size="lg">
                 <Link href="/about">Meer Informatie</Link>
               </Button>
