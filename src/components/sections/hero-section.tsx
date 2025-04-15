@@ -1,7 +1,16 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
+import { api } from "@/trpc/react";
 import Link from "next/link";
 
 export function HeroSection() {
+  const [data] = api.post.hello.useSuspenseQuery({
+    text: 'client',
+  });
+
+  console.log(data.greeting);
+
   return (
     <section
       className="py-20 flex items-center text-white bg-cover bg-center bg-no-repeat"
