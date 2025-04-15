@@ -1,9 +1,16 @@
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="bg-gradient-to-r from-primary to-primary/80 py-20">
+    <section
+      className="py-20 flex items-center text-white bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/hero-bg.png')",
+        backgroundColor: "#0F172A",
+      }}
+    >
+      {" "}
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0 ">
@@ -11,11 +18,14 @@ export function HeroSection() {
               Leer slim omgaan met geld op een leuke manier
             </h1>
             <p className="text-xl mb-8 text-primary-foreground">
-              GeldBuddies helpt jongeren financieel zelfredzaam te worden door middel van een
-              interactieve game.
+              GeldBuddies helpt jongeren financieel zelfredzaam te worden door
+              middel van een interactieve game.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="outline" size="lg">
+              <Button
+                asChild
+                className="bg-green-500 hover:bg-green-600 text-white text-lg px-6 py-4"
+              >
                 <Link href="/game">Start de Game</Link>
               </Button>
               <Button asChild variant="default" size="lg">
