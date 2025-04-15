@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { classroomSessions } from '@/db/schemas/classroom-schema';
 import { isValidClassroomCode } from '@/lib/utils/classroom-code';
+import { db } from '@/server/db';
+import { classroomSessions } from '@/server/db/schemas/classroom-schema';
 import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * GET /api/classroom/check?code=ABCDEF
@@ -26,21 +26,27 @@ export async function GET(req: NextRequest) {
     }
 
     if (!classroomSession.isActive) {
-      return NextResponse.json({ valid: false, error: 'This classroom session is no longer active' });
+      return NextResponse.json({
+        valid: false,
+        error: 'This classroom session is no longer active',
+      });
     }
 
     if (classroomSession.expiresAt && new Date(classroomSession.expiresAt) < new Date()) {
       return NextResponse.json({ valid: false, error: 'This classroom session has expired' });
     }
 
-    return NextResponse.json({ 
-      valid: true, 
+    return NextResponse.json({
+      valid: true,
       name: classroomSession.name,
       // Only return minimal information for security
-      hasLimit: !!classroomSession.maxPlayers
+      hasLimit: !!classroomSession.maxPlayers,
     });
   } catch (error) {
     console.error('Error checking classroom code:', error);
-    return NextResponse.json({ valid: false, error: 'Failed to check classroom code' }, { status: 500 });
+    return NextResponse.json(
+      { valid: false, error: 'Failed to check classroom code' },
+      { status: 500 }
+    );
   }
-} 
+}
