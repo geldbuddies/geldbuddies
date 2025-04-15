@@ -1,6 +1,6 @@
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { db } from '../db'
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { db } from '../db';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg' }),
@@ -12,9 +12,5 @@ export const auth = betterAuth({
     passwordRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     passwordRegexError:
       'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-    sendResetPassword: async ({ user, url }) => {
-      // TODO: Setup mail service to send reset password email
-      console.log('Reset password email sent to', user.email, 'with url', url)
-    },
   },
-})
+});
