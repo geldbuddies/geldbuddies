@@ -1,9 +1,9 @@
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import { players, users } from '@/server/db/schemas';
 import { classroomParticipants, classroomSessions } from '@/server/db/schemas/classroom-schema';
 import { and, eq } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -67,7 +67,8 @@ export async function POST(req: NextRequest) {
       }
     } else {
       // Production mode: Use authentication
-      const session = await getServerSession(authOptions);
+      const headersList = await headers();
+      const session = await auth.api.getSession({ headers: headersList });
 
       if (!session || !session.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

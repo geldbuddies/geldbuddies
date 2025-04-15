@@ -15,6 +15,13 @@
       "when": 1714653421000,
       "tag": "0001_classroom_system",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744698254383,
+      "tag": "0002_wakeful_meteorite",
+      "breakpoints": true
     }
   ]
 }
