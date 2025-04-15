@@ -1,8 +1,10 @@
 import { isValidClassroomCode } from '@/lib/utils/classroom-code';
+import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import { players, users } from '@/server/db/schemas';
 import { classroomParticipants, classroomSessions } from '@/server/db/schemas/classroom-schema';
 import { and, eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -11,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(req: NextRequest) {
   try {
-    const { code, displayName } = await req.json();
+    const { code, displayName, email } = await req.json();
 
     if (!code || !isValidClassroomCode(code)) {
       return NextResponse.json({ error: 'Invalid classroom code' }, { status: 400 });
@@ -45,36 +47,11 @@ export async function POST(req: NextRequest) {
 
     // Development mode: Create test player if needed
     if (process.env.NODE_ENV === 'development') {
-      // Get or create a unique browser ID from cookies
-      browserUniqueId = req.cookies.get('browser_id')?.value;
-
-      // If no cookie exists, create a new unique ID
-      if (!browserUniqueId) {
-        // Generate a completely random ID
-        browserUniqueId =
-          Math.random().toString(36).substring(2, 15) +
-          Math.random().toString(36).substring(2, 15) +
-          Date.now().toString(36);
-      }
-
-      // Add some randomness from the user agent too
-      const userAgent = req.headers.get('user-agent') || '';
-      const agentHash = userAgent
-        .split('')
-        .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-        .toString(36);
-
-      // Create a unique email based on this browser ID
-      const testEmail = `player-${browserUniqueId.substring(0, 8)}-${agentHash.substring(
-        0,
-        4
-      )}@example.com`;
-
-      console.log(`Creating/finding player with email: ${testEmail}`);
+      console.log(`Creating/finding player with email: ${email}`);
 
       // Look for existing player with this unique ID
       const testUser = await db.query.users.findFirst({
-        where: eq(users.email, testEmail),
+        where: eq(users.email, email),
       });
 
       if (!testUser) {
@@ -82,8 +59,8 @@ export async function POST(req: NextRequest) {
         const [newUser] = await db
           .insert(users)
           .values({
-            name: `Player ${browserUniqueId.substring(0, 5).toUpperCase()}`,
-            email: testEmail,
+            name: displayName || `Player ${email.substring(0, 5).toUpperCase()}`,
+            email: email,
             password: 'password',
             role: 'player',
           })
@@ -117,19 +94,6 @@ export async function POST(req: NextRequest) {
 
       // Use the provided display name or a generated one
       finalDisplayName = displayName || `Player ${playerRecord.id}`;
-
-      // Create a response that will be returned later
-      const response = NextResponse.next();
-
-      // Set the browser_id cookie if it doesn't exist yet
-      if (!req.cookies.get('browser_id')) {
-        response.cookies.set('browser_id', browserUniqueId, {
-          maxAge: 60 * 60 * 24 * 365, // 1 year
-          path: '/',
-          httpOnly: true,
-          sameSite: 'strict',
-        });
-      }
     } else {
       // Production mode: Use authentication
       const headersList = await headers();
