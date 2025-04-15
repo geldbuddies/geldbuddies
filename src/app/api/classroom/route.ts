@@ -1,10 +1,10 @@
-import { authOptions } from '@/lib/auth';
 import { generateClassroomCode } from '@/lib/utils/classroom-code';
+import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import { teachers, users } from '@/server/db/schemas';
 import { classroomSessions } from '@/server/db/schemas/classroom-schema';
 import { eq } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -29,7 +29,8 @@ export async function GET(req: NextRequest) {
     let classrooms = [];
 
     try {
-      const session = await getServerSession(authOptions);
+      const headersList = await headers();
+      const session = await auth.api.getSession({ headers: headersList });
       userInfo.isAuthenticated = !!session?.user;
       userInfo.userId = session?.user?.id || null;
 
@@ -133,7 +134,8 @@ export async function POST(req: NextRequest) {
         teacherId = testTeacher.id;
       }
     } else {
-      const session = await getServerSession(authOptions);
+      const headersList = await headers();
+      const session = await auth.api.getSession({ headers: headersList });
 
       if (!session || !session.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
