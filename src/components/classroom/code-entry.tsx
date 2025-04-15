@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { isValidClassroomCode } from '@/lib/utils/classroom-code';
 import { useRouter } from 'next/navigation';
+import { Fragment, useState } from 'react';
 
 export function ClassroomCodeEntry() {
   const [code, setCode] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -25,7 +33,7 @@ export function ClassroomCodeEntry() {
 
     // Convert to uppercase for consistency
     const formattedCode = code.toUpperCase();
-    
+
     if (!isValidClassroomCode(formattedCode)) {
       setError('Invalid classroom code format');
       return;
@@ -62,9 +70,10 @@ export function ClassroomCodeEntry() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           code: code.toUpperCase(),
-          displayName: displayName || undefined
+          displayName: displayName || undefined,
+          email: email!,
         }),
       });
 
@@ -88,9 +97,7 @@ export function ClassroomCodeEntry() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Join Classroom</CardTitle>
-        <CardDescription>
-          Enter the classroom code provided by your teacher
-        </CardDescription>
+        <CardDescription>Enter the classroom code provided by your teacher</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid w-full items-center gap-4">
@@ -106,48 +113,54 @@ export function ClassroomCodeEntry() {
             />
             {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
             {classroomName && (
-              <p className="text-sm text-green-600 mt-1">
-                Classroom found: {classroomName}
-              </p>
+              <p className="text-sm text-green-600 mt-1">Classroom found: {classroomName}</p>
             )}
           </div>
 
           {classroomName && (
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="displayName">Your Display Name (Optional)</Label>
-              <Input
-                id="displayName"
-                placeholder="How others will see you"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                maxLength={100}
-              />
-              <p className="text-xs text-muted-foreground">
-                Leave blank to use your account name
-              </p>
-            </div>
+            <Fragment>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="displayName">Your Display Name (Optional)</Label>
+                <Input
+                  id="displayName"
+                  placeholder="How others will see you"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  maxLength={100}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave blank to use your account name
+                </p>
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="email">Your Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  maxLength={100}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Make sure to use your real email so you can login later.
+                </p>
+              </div>
+            </Fragment>
           )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
         {!classroomName ? (
-          <Button 
-            onClick={handleCheckCode} 
-            disabled={!code || isChecking}
-            className="w-full"
-          >
+          <Button onClick={handleCheckCode} disabled={!code || isChecking} className="w-full">
             {isChecking ? 'Checking...' : 'Check Code'}
           </Button>
         ) : (
-          <Button 
-            onClick={handleJoinClassroom} 
-            disabled={isJoining}
-            className="w-full"
-          >
+          <Button onClick={handleJoinClassroom} disabled={isJoining} className="w-full">
             {isJoining ? 'Joining...' : 'Join Classroom'}
           </Button>
         )}
       </CardFooter>
     </Card>
   );
-} 
+}
