@@ -1,34 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { classroomParticipants } from '@/db/schemas/classroom-schema';
+import { auth } from '@/server/auth';
+import { db } from '@/server/db';
+import { classroomParticipants } from '@/server/db/schemas/classroom-schema';
 import { eq } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
     // Skip authentication check in development
     const isDev = process.env.NODE_ENV === 'development';
-    
+
     if (!isDev) {
-      const session = await getServerSession(authOptions);
-      
+      const headersList = await headers();
+      const session = await auth.api.getSession({ headers: headersList });
+
       if (!session?.user) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
-    
+
     const { participantId, redirectToHome = false } = await req.json();
 
     // Validate input
     if (!participantId || typeof participantId !== 'number') {
-      return NextResponse.json(
-        { error: 'Invalid participant ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid participant ID' }, { status: 400 });
     }
 
     // Find the participant
@@ -40,23 +35,21 @@ export async function POST(req: NextRequest) {
         sessionId: true,
         displayName: true,
         status: true,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     if (!participant) {
-      return NextResponse.json(
-        { error: 'Participant not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Participant not found' }, { status: 404 });
     }
 
     // Update the participant status
-    await db.update(classroomParticipants)
+    await db
+      .update(classroomParticipants)
       .set({
         status: 'removed',
         isActive: false,
-        metadata: JSON.stringify({ redirectToHome, removedAt: new Date().toISOString() })
+        metadata: JSON.stringify({ redirectToHome, removedAt: new Date().toISOString() }),
       })
       .where(eq(classroomParticipants.id, participant.id));
 
@@ -66,14 +59,11 @@ export async function POST(req: NextRequest) {
         id: participant.id,
         playerId: participant.playerId,
         status: 'removed',
-        shouldRedirect: redirectToHome
-      }
+        shouldRedirect: redirectToHome,
+      },
     });
   } catch (error) {
     console.error('Error removing participant:', error);
-    return NextResponse.json(
-      { error: 'Failed to remove participant' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to remove participant' }, { status: 500 });
   }
-} 
+}

@@ -1,34 +1,29 @@
+import { auth } from '@/server/auth';
+import { db } from '@/server/db';
+import { classroomParticipants, classroomSessions } from '@/server/db/schemas/classroom-schema';
+import { and, eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { classroomSessions, classroomParticipants } from '@/db/schemas/classroom-schema';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { eq, and } from 'drizzle-orm';
 
 /**
  * GET /api/classroom/[id]/participants
  * Get all participants in a classroom session
  */
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
   try {
     // Properly await the params object
     const params = await Promise.resolve(context.params);
     const { id } = params;
-    
+
     // Skip authentication check in development
     const isDev = process.env.NODE_ENV === 'development';
-    
+
     if (!isDev) {
-      const session = await getServerSession(authOptions);
-      
+      const headersList = await headers();
+      const session = await auth.api.getSession({ headers: headersList });
+
       if (!session?.user) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
 
@@ -36,10 +31,7 @@ export async function GET(
 
     // Validate input
     if (isNaN(classroomId)) {
-      return NextResponse.json(
-        { error: 'Invalid classroom ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid classroom ID' }, { status: 400 });
     }
 
     console.log('Fetching classroom with ID:', classroomId);
@@ -56,7 +48,7 @@ export async function GET(
         maxPlayers: true,
         createdAt: true,
         expiresAt: true,
-      }
+      },
     });
 
     if (!classroom) {
@@ -70,13 +62,13 @@ export async function GET(
 
     // Check if current user has been removed
     let shouldRedirect = false;
-    
+
     // Use request cookies instead of server cookies
     const participantIdCookie = req.cookies.get('participantId');
-    
+
     if (participantIdCookie) {
       const participantId = parseInt(participantIdCookie.value, 10);
-      
+
       if (!isNaN(participantId)) {
         // Check if this participant exists but has been marked as removed
         const removedParticipant = await db.query.classroomParticipants.findFirst({
@@ -86,7 +78,7 @@ export async function GET(
             eq(classroomParticipants.status, 'removed')
           ),
         });
-        
+
         if (removedParticipant) {
           console.log('Participant has been removed, should redirect to home');
           shouldRedirect = true;
@@ -121,19 +113,24 @@ export async function GET(
       displayName: p.displayName || 'Anonymous Player',
       status: p.status || 'active',
       joinedAt: p.joinedAt?.toISOString() || new Date().toISOString(),
-      lastActiveAt: p.lastActiveAt?.toISOString() || p.joinedAt?.toISOString() || new Date().toISOString(),
+      lastActiveAt:
+        p.lastActiveAt?.toISOString() || p.joinedAt?.toISOString() || new Date().toISOString(),
     }));
 
     return NextResponse.json({
       classroom,
       participants: formattedParticipants,
-      shouldRedirect
+      shouldRedirect,
     });
   } catch (error) {
     console.error('Error fetching classroom participants:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch classroom data: ' + (error instanceof Error ? error.message : String(error)) },
+      {
+        error:
+          'Failed to fetch classroom data: ' +
+          (error instanceof Error ? error.message : String(error)),
+      },
       { status: 500 }
     );
   }
-} 
+}

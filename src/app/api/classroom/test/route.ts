@@ -1,6 +1,6 @@
+import { db } from '@/server/db';
+import { classroomSessions } from '@/server/db/schemas/classroom-schema';
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { classroomSessions } from '@/db/schemas/classroom-schema';
 
 /**
  * GET /api/classroom/test
@@ -14,19 +14,22 @@ export async function GET() {
       limit: 5,
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Database connection successful', 
+    return NextResponse.json({
+      success: true,
+      message: 'Database connection successful',
       count: result.length,
-      firstFew: result
+      firstFew: result,
     });
   } catch (error: any) {
     console.error('Database test error:', error);
-    
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message || 'Unknown error',
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message || 'Unknown error',
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      },
+      { status: 500 }
+    );
   }
-} 
+}
