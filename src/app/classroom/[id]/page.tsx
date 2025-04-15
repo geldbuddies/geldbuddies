@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { useRouter, useParams } from 'next/navigation';
-import React from 'react';
-import { RefreshCw, Clock, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Clock, LogOut, RefreshCw } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type Participant = {
   id: number;
@@ -40,39 +39,55 @@ export default function ClassroomPage() {
   const router = useRouter();
 
   // Simple function to fetch data
-  const fetchData = useCallback(async (showLoadingState = false) => {
-    try {
-      if (showLoadingState) {
-        setRefreshing(true);
-      }
-      
-      const response = await fetch(`/api/classroom/${id}/participants`);
-      
-      if (!response.ok) {
+  const fetchData = useCallback(
+    async (showLoadingState = false) => {
+      try {
+        if (showLoadingState) {
+          setRefreshing(true);
+        }
+
+        const response = await fetch(`/api/classroom/${id}/participants`);
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to fetch classroom data');
+        }
+
         const data = await response.json();
-        throw new Error(data.error || 'Failed to fetch classroom data');
+
+        if (data.classroom.status === 'game') {
+          console.log('Game is in progress, redirecting to game page');
+          router.push('/game');
+          return;
+        }
+
+        // Check if user has been removed from the classroom
+        if (data.shouldRedirect === true) {
+          console.log('User has been removed from the classroom, redirecting to homepage');
+          router.push('/');
+          return;
+        }
+
+        // Check if teacher has started the game
+        if (data.redirectTo) {
+          console.log(`Teacher has started the game, redirecting to: ${data.redirectTo}`);
+          router.push(data.redirectTo);
+          return;
+        }
+
+        setClassroom(data.classroom);
+        setParticipants(data.participants);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'An error occurred');
+        console.error(err);
+      } finally {
+        setRefreshing(false);
+        setLoading(false);
       }
-      
-      const data = await response.json();
-      
-      // Check if user has been removed from the classroom
-      if (data.shouldRedirect === true) {
-        console.log('User has been removed from the classroom, redirecting to homepage');
-        router.push('/');
-        return;
-      }
-      
-      setClassroom(data.classroom);
-      setParticipants(data.participants);
-      setError(null);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
-      console.error(err);
-    } finally {
-      setRefreshing(false);
-      setLoading(false);
-    }
-  }, [id, router]);
+    },
+    [id, router]
+  );
 
   // Function to handle manual refresh
   const handleManualRefresh = () => {
@@ -81,15 +96,15 @@ export default function ClassroomPage() {
       clearInterval(countdownTimer.current);
       countdownTimer.current = null;
     }
-    
+
     if (refreshTimer.current) {
       clearTimeout(refreshTimer.current);
       refreshTimer.current = null;
     }
-    
+
     // Fetch data immediately
     fetchData(true);
-    
+
     // If auto-refresh is enabled, restart the countdown
     if (autoRefresh) {
       setCountdown(REFRESH_INTERVAL);
@@ -103,10 +118,10 @@ export default function ClassroomPage() {
     if (countdownTimer.current) {
       clearInterval(countdownTimer.current);
     }
-    
+
     // Set up a new countdown
     countdownTimer.current = setInterval(() => {
-      setCountdown(prev => {
+      setCountdown((prev) => {
         const next = prev - 1;
         if (next <= 0) {
           // When countdown reaches zero, clear the interval
@@ -122,23 +137,23 @@ export default function ClassroomPage() {
   const toggleAutoRefresh = () => {
     const newState = !autoRefresh;
     setAutoRefresh(newState);
-    
+
     // Clear existing timers
     if (countdownTimer.current) {
       clearInterval(countdownTimer.current);
       countdownTimer.current = null;
     }
-    
+
     if (refreshTimer.current) {
       clearTimeout(refreshTimer.current);
       refreshTimer.current = null;
     }
-    
+
     // If enabling auto-refresh, reset countdown and start it
     if (newState) {
       setCountdown(REFRESH_INTERVAL);
       startCountdown();
-      
+
       // Set up the refresh timer
       refreshTimer.current = setTimeout(() => {
         fetchData(false);
@@ -150,15 +165,15 @@ export default function ClassroomPage() {
   useEffect(() => {
     // Only proceed if auto-refresh is enabled
     if (!autoRefresh) return;
-    
+
     // When countdown reaches 0 and we're not already refreshing
     if (countdown === 0 && !refreshing && !loading) {
       // Fetch data
       fetchData(false);
-      
+
       // Reset countdown
       setCountdown(REFRESH_INTERVAL);
-      
+
       // Start the countdown again
       startCountdown();
     }
@@ -168,13 +183,13 @@ export default function ClassroomPage() {
   useEffect(() => {
     // Load classroom data on mount
     fetchData(true);
-    
+
     // If auto-refresh is enabled, start the countdown
     if (autoRefresh) {
       setCountdown(REFRESH_INTERVAL);
       startCountdown();
     }
-    
+
     // Clean up all timers when unmounting
     return () => {
       if (countdownTimer.current) {
@@ -191,7 +206,7 @@ export default function ClassroomPage() {
     if (confirm('Are you sure you want to leave this classroom?')) {
       try {
         setRefreshing(true);
-        
+
         // Call the leave API
         const response = await fetch('/api/classroom/leave', {
           method: 'POST',
@@ -199,10 +214,10 @@ export default function ClassroomPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            classroomId: id
+            classroomId: id,
           }),
         });
-        
+
         if (response.ok) {
           // Redirect to join page
           router.push('/join');
@@ -239,8 +254,8 @@ export default function ClassroomPage() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold mb-2">{classroom.name}</h1>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               onClick={handleLeaveClassroom}
               className="text-red-500 hover:text-red-700 hover:bg-red-100 flex items-center gap-1"
@@ -262,8 +277,8 @@ export default function ClassroomPage() {
           </div>
         </div>
         <div className="mt-4 md:mt-0 flex items-start gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={handleManualRefresh}
             disabled={refreshing}
@@ -272,9 +287,9 @@ export default function ClassroomPage() {
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
             {refreshing ? 'Refreshing...' : 'Refresh Now'}
           </Button>
-          
-          <Button 
-            variant={autoRefresh ? "default" : "outline"} 
+
+          <Button
+            variant={autoRefresh ? 'default' : 'outline'}
             size="sm"
             onClick={toggleAutoRefresh}
             className="flex items-center gap-1"
@@ -294,9 +309,7 @@ export default function ClassroomPage() {
       <Card>
         <CardHeader>
           <CardTitle>Classroom Participants</CardTitle>
-          <CardDescription>
-            All students currently joined in this classroom
-          </CardDescription>
+          <CardDescription>All students currently joined in this classroom</CardDescription>
         </CardHeader>
         <CardContent>
           {participants.length === 0 ? (
@@ -320,7 +333,7 @@ export default function ClassroomPage() {
                         </p>
                       </div>
                       <div className="ml-auto">
-                        <Badge 
+                        <Badge
                           variant={participant.status === 'active' ? 'default' : 'outline'}
                           className="text-xs capitalize"
                         >
@@ -379,9 +392,9 @@ function LoadingState() {
   );
 }
 
-function ErrorState({ error, onRetry }: { error: string, onRetry: () => void }) {
+function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
   const router = useRouter();
-  
+
   return (
     <div className="container mx-auto py-20 px-4 text-center">
       <h2 className="text-2xl font-bold mb-4">Error Loading Classroom</h2>
@@ -390,9 +403,7 @@ function ErrorState({ error, onRetry }: { error: string, onRetry: () => void }) 
         <Button variant="outline" onClick={() => router.back()}>
           Go Back
         </Button>
-        <Button onClick={onRetry}>
-          Retry
-        </Button>
+        <Button onClick={onRetry}>Retry</Button>
       </div>
     </div>
   );
@@ -400,14 +411,14 @@ function ErrorState({ error, onRetry }: { error: string, onRetry: () => void }) 
 
 function EmptyState() {
   const router = useRouter();
-  
+
   return (
     <div className="container mx-auto py-20 px-4 text-center">
       <h2 className="text-2xl font-bold mb-4">Classroom Not Found</h2>
-      <p className="text-muted-foreground mb-8">The classroom you're looking for doesn't exist or has been deleted.</p>
-      <Button onClick={() => router.push('/join')}>
-        Join a Different Classroom
-      </Button>
+      <p className="text-muted-foreground mb-8">
+        The classroom you're looking for doesn't exist or has been deleted.
+      </p>
+      <Button onClick={() => router.push('/join')}>Join a Different Classroom</Button>
     </div>
   );
 }
@@ -416,7 +427,7 @@ function EmptyState() {
 function getInitials(name: string): string {
   return name
     .split(' ')
-    .map(word => word[0])
+    .map((word) => word[0])
     .join('')
     .toUpperCase()
     .substring(0, 2);
@@ -427,7 +438,7 @@ function formatTime(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-  
+
   if (diffInMinutes < 1) {
     return 'just now';
   } else if (diffInMinutes < 60) {
@@ -436,11 +447,11 @@ function formatTime(dateString: string): string {
     const hours = Math.floor(diffInMinutes / 60);
     return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
   } else {
-    return date.toLocaleDateString(undefined, { 
-      month: 'short', 
-      day: 'numeric', 
-      hour: 'numeric', 
-      minute: '2-digit' 
+    return date.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   }
-} 
+}

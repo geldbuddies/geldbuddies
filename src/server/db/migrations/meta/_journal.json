@@ -22,6 +22,13 @@
       "when": 1744698254383,
       "tag": "0002_wakeful_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744701953927,
+      "tag": "0003_icy_robbie_robertson",
+      "breakpoints": true
     }
   ]
 }

@@ -45,6 +45,7 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
         code: true,
         description: true,
         isActive: true,
+        status: true,
         maxPlayers: true,
         createdAt: true,
         expiresAt: true,
@@ -62,6 +63,7 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
 
     // Check if current user has been removed
     let shouldRedirect = false;
+    let redirectTo = null;
 
     // Use request cookies instead of server cookies
     const participantIdCookie = req.cookies.get('participantId');
@@ -82,6 +84,30 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
         if (removedParticipant) {
           console.log('Participant has been removed, should redirect to home');
           shouldRedirect = true;
+        }
+
+        // Check if this participant should be redirected to game
+        const participantData = await db.query.classroomParticipants.findFirst({
+          where: and(
+            eq(classroomParticipants.id, participantId),
+            eq(classroomParticipants.sessionId, classroomId),
+            eq(classroomParticipants.status, 'in-game')
+          ),
+        });
+
+        console.log('Participant data:', participantData);
+
+        if (participantData) {
+          try {
+            // @ts-ignore - metadata is a JSON string
+            const metadata = participantData.metadata ? JSON.parse(participantData.metadata) : null;
+            if (metadata && metadata.redirectTo) {
+              console.log(`Game has started, should redirect to: ${metadata.redirectTo}`);
+              redirectTo = metadata.redirectTo;
+            }
+          } catch (e) {
+            console.error('Error parsing participant metadata:', e);
+          }
         }
       }
     }
@@ -121,6 +147,7 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
       classroom,
       participants: formattedParticipants,
       shouldRedirect,
+      redirectTo,
     });
   } catch (error) {
     console.error('Error fetching classroom participants:', error);
