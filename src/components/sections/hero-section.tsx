@@ -31,6 +31,9 @@ export function HeroSection() {
               <Button asChild variant="secondary" size="lg">
                 <Link href="/join">Join Classroom</Link>
               </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/account">Log in of maak een account</Link>
+              </Button>
               <Button asChild variant="default" size="lg">
                 <Link href="/about">Meer Informatie</Link>
               </Button>
