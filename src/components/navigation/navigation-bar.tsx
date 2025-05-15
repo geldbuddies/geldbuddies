@@ -1,14 +1,12 @@
-import Link from "next/link";
-import { NavItem, NavItemProps } from "./nav-item";
+import Link from 'next/link';
+import { NavItem, NavItemProps } from './nav-item';
 
 const navItems: NavItemProps[] = [
   { label: 'Home', href: '/' },
   { label: 'Over Ons', href: '/about' },
-  { label: 'Game', href: '/game' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Start Nu', href: '/game', isButton: true, variant: 'default' },
+  { label: 'Docenten', href: '/teacher' },
   { label: 'Join Class', href: '/join', isButton: true, variant: 'outline' },
-  { label: 'Debug', href: '/debug' },
 ];
 
 export default function NavigationBar() {

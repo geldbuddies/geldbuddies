@@ -18,7 +18,7 @@ export function NavItem({ label, href, isButton = false, variant = 'default' }: 
   }
 
   return (
-    <Button asChild variant="ghost">
+    <Button asChild variant="link" className="text-background">
       <Link href={href}>{label}</Link>
     </Button>
   );
