@@ -1,27 +1,25 @@
-import { getSessionCookie } from 'better-auth/cookies';
-import { betterFetch } from 'better-auth/react';
 import { Session } from 'better-auth/types';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  // Bypass all authentication checks in development
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
-  }
+// List of protected routes that require authentication
+const PROTECTED_ROUTES = ['/teacher', '/classroom', '/dashboard', '/profile', '/settings'] as const;
 
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Check if this is a protected route
-  const isTeacherRoute = path.startsWith('/teacher');
-  const isClassroomRoute = path.startsWith('/classroom');
+  // Check if the current path is a protected route
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) => path.startsWith(route));
 
-  if (isTeacherRoute || isClassroomRoute) {
-    const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
-      baseURL: request.nextUrl.origin,
+  if (isProtectedRoute) {
+    const response = await fetch(`${request.nextUrl.origin}/api/auth/get-session`, {
       headers: {
-        cookie: request.headers.get('cookie') || '', // Forward the cookies from the request
+        cookie: request.headers.get('cookie') || '',
       },
     });
+    console.log('response', response);
+    const { data: session } = (await response.json()) as { data: Session };
+
+    console.log('session', session);
 
     // If the user isn't authenticated
     if (!session) {
@@ -30,12 +28,6 @@ export async function middleware(request: NextRequest) {
       redirectUrl.searchParams.set('callbackUrl', encodeURI(request.nextUrl.pathname));
       return NextResponse.redirect(redirectUrl);
     }
-
-    // // Role-specific checks
-    // if (isTeacherRoute && session.user.role !== 'teacher') {
-    //   // If trying to access teacher routes without teacher role
-    //   return NextResponse.redirect(new URL('/unauthorized', request.nextUrl.origin));
-    // }
   }
 
   return NextResponse.next();
@@ -43,5 +35,11 @@ export async function middleware(request: NextRequest) {
 
 // Configure which routes should be handled by this middleware
 export const config = {
-  matcher: ['/teacher/:path*', '/classroom/:path*'],
+  matcher: [
+    '/teacher/:path*',
+    '/classroom/:path*',
+    '/dashboard/:path*',
+    '/profile/:path*',
+    '/settings/:path*',
+  ],
 };
