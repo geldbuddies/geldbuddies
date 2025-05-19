@@ -1,11 +1,18 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { organization } from 'better-auth/plugins';
+import { emailOTP, organization } from 'better-auth/plugins';
 import { db } from '../db';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg' }),
-  plugins: [organization()],
+  plugins: [
+    organization(),
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        console.log('sendVerificationOTP', email, otp, type);
+      },
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,

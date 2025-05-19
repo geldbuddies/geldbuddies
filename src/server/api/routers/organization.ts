@@ -1,5 +1,5 @@
 import { generateJoinCode } from '@/lib/classroom';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 import { member, organization } from '@/server/db/schemas/auth-schema';
 import { and, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
@@ -112,9 +112,36 @@ export const organizationRouter = createTRPCRouter({
       return org;
     }),
 
-  getOrganizationByJoinCode: protectedProcedure
+  getPublicOrganization: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+
+      const org = await ctx.db.query.organization.findFirst({
+        where: eq(organization.id, id),
+        columns: {
+          id: true,
+          name: true,
+          joinCode: true,
+          joinCodeExpiresAt: true,
+        },
+      });
+
+      if (!org) {
+        throw new Error('Organization not found');
+      }
+
+      return org;
+    }),
+
+  getOrganizationByJoinCode: publicProcedure
     .input(z.object({ joinCode: z.string() }))
     .query(async ({ ctx, input }) => {
+      console.log('input', input);
       const org = await ctx.db.query.organization.findFirst({
         where: and(
           eq(organization.joinCode, input.joinCode),
@@ -123,5 +150,22 @@ export const organizationRouter = createTRPCRouter({
       });
 
       return org;
+    }),
+
+  getMemberByUserId: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { organizationId, userId } = input;
+
+      const memberRecord = await ctx.db.query.member.findFirst({
+        where: and(eq(member.organizationId, organizationId), eq(member.userId, userId)),
+      });
+
+      return memberRecord;
     }),
 });
