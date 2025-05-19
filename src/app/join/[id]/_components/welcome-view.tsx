@@ -8,10 +8,9 @@ interface WelcomeViewProps {
 }
 
 export function WelcomeView({ organizationId }: WelcomeViewProps) {
-  const { data: organization } = api.organization.getPublicOrganization.useQuery(
-    { id: organizationId },
-    { refetchInterval: 30000 } // Refresh every 30 seconds
-  );
+  const { data: organization } = api.organization.getPublicOrganization.useQuery({
+    id: organizationId,
+  });
 
   if (!organization) return null;
 

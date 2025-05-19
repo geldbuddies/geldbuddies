@@ -1,3 +1,4 @@
+import { auth } from '@/server/auth';
 import { getServerSession } from '@/server/auth/utils';
 import { api } from '@/trpc/server';
 import { notFound } from 'next/navigation';
@@ -25,12 +26,22 @@ export default async function JoinOrganizationPage({ params }: JoinOrganizationP
         })
       : null;
 
+    if (!session?.user) {
+      return <EmailOTPForm organizationId={id} />;
+    }
+
     if (member?.role === 'owner') {
       return <OwnerView organizationId={id} />;
     }
 
-    if (!session?.user) {
-      return <EmailOTPForm organizationId={id} />;
+    if (!member) {
+      await auth.api.addMember({
+        body: {
+          userId: session.user.id,
+          organizationId: id,
+          role: 'member',
+        },
+      });
     }
 
     return <WelcomeView organizationId={id} />;
