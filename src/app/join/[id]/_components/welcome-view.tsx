@@ -21,10 +21,10 @@ export function WelcomeView({ organizationId }: WelcomeViewProps) {
   );
 
   useEffect(() => {
-    if (organization?.gameState === 'in_progress') {
-      router.push('/game'); // Replace with your actual game route
+    if (organization?.gameState !== 'not_started') {
+      router.push(`/game/${organizationId}`);
     }
-  }, [organization?.gameState, router]);
+  }, [organization?.gameState, router, organizationId]);
 
   if (!organization) return null;
 

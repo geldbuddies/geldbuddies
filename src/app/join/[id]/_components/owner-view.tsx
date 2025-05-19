@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   InputOTP,
@@ -9,12 +8,12 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { authClient } from '@/lib/auth-client';
 import { api } from '@/trpc/react';
-import { Trash2, UserIcon } from 'lucide-react';
+import { UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { useEffect } from 'react';
+
 interface OwnerViewProps {
   organizationId: string;
 }
@@ -32,19 +31,13 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
     { refetchInterval: 10000 }
   );
 
-  if (!organization) return null;
+  useEffect(() => {
+    if (organization?.gameState !== 'not_started') {
+      router.push(`/leaderboard/${organizationId}`);
+    }
+  }, [organization?.gameState, router, organizationId]);
 
-  const removeMember = (memberId: string) => {
-    void authClient.organization
-      .removeMember({
-        organizationId,
-        memberIdOrEmail: memberId,
-      })
-      .then(() => {
-        router.refresh();
-        toast.success('Lid verwijderd');
-      });
-  };
+  if (!organization) return null;
 
   return (
     <main className="container mx-auto flex p-16 gap-16 justify-center items-center fixed inset-0 flex-col">
