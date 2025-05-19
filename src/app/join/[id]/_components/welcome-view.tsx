@@ -2,15 +2,29 @@
 
 import { LogOutButton } from '@/components/auth/logout-button';
 import { api } from '@/trpc/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface WelcomeViewProps {
   organizationId: string;
 }
 
 export function WelcomeView({ organizationId }: WelcomeViewProps) {
-  const { data: organization } = api.organization.getPublicOrganization.useQuery({
-    id: organizationId,
-  });
+  const router = useRouter();
+  const { data: organization } = api.organization.getPublicOrganization.useQuery(
+    {
+      id: organizationId,
+    },
+    {
+      refetchInterval: 1000, // Poll every second for game state changes
+    }
+  );
+
+  useEffect(() => {
+    if (organization?.gameState === 'in_progress') {
+      router.push('/game'); // Replace with your actual game route
+    }
+  }, [organization?.gameState, router]);
 
   if (!organization) return null;
 
@@ -20,8 +34,10 @@ export function WelcomeView({ organizationId }: WelcomeViewProps) {
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Welkom bij {organization.name}</h1>
           <p className="text-sm text-muted-foreground">
-            Wacht tot de docent het spel start. Je wordt automatisch doorgestuurd wanneer het spel
-            begint.
+            {organization.gameState === 'not_started' &&
+              'Wacht tot de docent het spel start. Je wordt automatisch doorgestuurd wanneer het spel begint.'}
+            {organization.gameState === 'paused' && 'Het spel is momenteel gepauzeerd.'}
+            {organization.gameState === 'completed' && 'Het spel is afgelopen.'}
           </p>
         </div>
       </div>

@@ -60,6 +60,7 @@ export const organization = pgTable('organization', {
   metadata: text('metadata'),
   joinCode: text('join_code').unique(),
   joinCodeExpiresAt: timestamp('join_code_expires_at'),
+  gameState: text('game_state').default('not_started').notNull(),
 });
 
 export const member = pgTable('member', {

@@ -1,6 +1,6 @@
 import { generateJoinCode } from '@/lib/classroom';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
-import { member, organization } from '@/server/db/schemas/auth-schema';
+import { member, organization, user } from '@/server/db/schemas/auth-schema';
 import { and, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -48,6 +48,7 @@ export const organizationRouter = createTRPCRouter({
           metadata: organization.metadata,
           joinCode: organization.joinCode,
           joinCodeExpiresAt: organization.joinCodeExpiresAt,
+          gameState: organization.gameState,
         })
         .from(organization)
         .innerJoin(member, eq(member.organizationId, organization.id))
@@ -128,6 +129,7 @@ export const organizationRouter = createTRPCRouter({
           name: true,
           joinCode: true,
           joinCodeExpiresAt: true,
+          gameState: true,
         },
       });
 
@@ -167,5 +169,61 @@ export const organizationRouter = createTRPCRouter({
       });
 
       return memberRecord;
+    }),
+
+  getOrganizationMembers: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { organizationId } = input;
+
+      const members = await ctx.db
+        .select({
+          id: member.id,
+          user: {
+            name: user.name,
+          },
+        })
+        .from(member)
+        .innerJoin(user, eq(member.userId, user.id))
+        .where(and(eq(member.organizationId, organizationId), eq(member.role, 'member')))
+        .orderBy(member.createdAt);
+
+      return members;
+    }),
+
+  updateGameState: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string(),
+        gameState: z.enum(['not_started', 'in_progress', 'paused', 'completed']),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { organizationId, gameState } = input;
+
+      // Verify user has permission to update game state
+      const memberRecord = await ctx.db.query.member.findFirst({
+        where: and(
+          eq(member.organizationId, organizationId),
+          eq(member.userId, ctx.session.user.id),
+          eq(member.role, 'owner')
+        ),
+      });
+
+      if (!memberRecord) {
+        throw new Error('Unauthorized to update game state');
+      }
+
+      // Update game state
+      await ctx.db
+        .update(organization)
+        .set({ gameState })
+        .where(eq(organization.id, organizationId));
+
+      return { success: true };
     }),
 });
