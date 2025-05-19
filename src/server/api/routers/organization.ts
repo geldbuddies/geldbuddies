@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { member, organization } from '@/server/db/schemas/auth-schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const organizationRouter = createTRPCRouter({
@@ -40,5 +40,18 @@ export const organizationRouter = createTRPCRouter({
       }
 
       return org[0];
+    }),
+
+  getOrganizationByJoinCode: protectedProcedure
+    .input(z.object({ joinCode: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.query.organization.findFirst({
+        where: and(
+          eq(organization.joinCode, input.joinCode),
+          gt(organization.joinCodeExpiresAt, new Date())
+        ),
+      });
+
+      return org;
     }),
 });
