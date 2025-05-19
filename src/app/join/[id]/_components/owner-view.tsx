@@ -14,10 +14,10 @@ interface OwnerViewProps {
 }
 
 export function OwnerView({ organizationId }: OwnerViewProps) {
-  const { data: organization } = api.organization.getPublicOrganization.useQuery(
-    { id: organizationId },
-    { refetchInterval: 30000 } // Refresh every 30 seconds
-  );
+  const { data: organization } = api.organization.getOrganization.useQuery({
+    id: organizationId,
+    refreshJoinCode: true,
+  });
 
   if (!organization) return null;
 
@@ -67,7 +67,6 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
           </InputOTP>
         </div>
       </div>
-      <LogOutButton />
     </div>
   );
 }
