@@ -14,21 +14,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
 import { PlusIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
 export function CreateOrganizationDialog() {
   const [newOrgName, setNewOrgName] = useState('');
+  const router = useRouter();
 
   const handleCreateOrganization = async () => {
     try {
-      await authClient.organization.create({
+      const organization = await authClient.organization.create({
         name: newOrgName,
         slug: newOrgName.toLowerCase().replace(/\s+/g, '-'),
       });
       setNewOrgName('');
+      router.push(`/dashboard/classrooms/${organization.data?.id}`);
+      router.refresh();
     } catch (error) {
       console.error('Failed to create organization:', error);
-      // TODO: Add proper error handling UI
     }
   };
 
