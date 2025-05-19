@@ -1,6 +1,10 @@
-import { ArrowUpLeft, GalleryVerticalEnd } from 'lucide-react';
+'use client';
+
+import { ArrowUpLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
@@ -14,33 +18,12 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import { api } from '@/trpc/react';
 import Link from 'next/link';
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: 'Overzicht',
-      url: '/dashboard',
-    },
-    {
-      title: 'Classrooms',
-      url: '/dashboard/classrooms',
-      items: [
-        {
-          title: 'Bekijk alle',
-          url: '/dashboard/classrooms',
-        },
-        {
-          title: 'Maak een nieuwe',
-          url: '/dashboard/classrooms/create',
-        },
-      ],
-    },
-  ],
-};
-
 export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [organizations] = api.organization.getOrganizations.useSuspenseQuery();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -62,26 +45,45 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
-                    {item.title}
-                  </a>
-                </SidebarMenuButton>
-                {item.items?.length ? (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <Collapsible asChild defaultOpen={true} className="group/collapsible">
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton>
+                    Klassen{' '}
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild>
-                          <a href={item.url}>{item.title}</a>
+                    {organizations.slice(0, 3).map((organization) => (
+                      <SidebarMenuSubItem key={organization.id}>
+                        <SidebarMenuSubButton
+                          asChild
+                          className="bg-primary text-background hover:bg-primary/80 hover:text-background"
+                        >
+                          <Link href={`/dashboard/classrooms/${organization.id}`}>
+                            {organization.name}
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
+
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/dashboard/classrooms" className="text-muted-foreground">
+                          Bekijk alle
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
                   </SidebarMenuSub>
-                ) : null}
+                </CollapsibleContent>
               </SidebarMenuItem>
-            ))}
+            </Collapsible>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

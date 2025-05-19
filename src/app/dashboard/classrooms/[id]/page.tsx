@@ -9,8 +9,10 @@ interface OrganizationPageProps {
 }
 
 export default async function OrganizationPage({ params }: OrganizationPageProps) {
+  const { id } = await params;
+
   try {
-    const organization = await api.organization.getOrganization({ id: params.id });
+    const organization = await api.organization.getOrganization({ id });
 
     return (
       <section className="container mx-auto px-4 py-8">
