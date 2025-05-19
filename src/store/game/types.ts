@@ -17,6 +17,8 @@ export interface PlayerSlice {
     birthMonth: number;
     birthYear: number;
     isInitialized: boolean;
+    energy: number;
+    maxEnergy: number;
   };
   initializePlayer: (playerData: {
     money: number;
@@ -26,6 +28,8 @@ export interface PlayerSlice {
   }) => void;
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;
+  useEnergy: (amount: number) => boolean;
+  resetEnergy: () => void;
 }
 
 // Jobs slice types
