@@ -58,7 +58,7 @@ export const organization = pgTable('organization', {
   logo: text('logo'),
   createdAt: timestamp('created_at').notNull(),
   metadata: text('metadata'),
-  joinCode: text('join_code'),
+  joinCode: text('join_code').unique(),
   joinCodeExpiresAt: timestamp('join_code_expires_at'),
 });
 
