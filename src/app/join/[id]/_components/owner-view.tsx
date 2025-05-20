@@ -1,5 +1,6 @@
 'use client';
 
+import { LogOutButton } from '@/components/auth/logout-button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   InputOTP,
@@ -32,7 +33,7 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
   );
 
   useEffect(() => {
-    if (organization?.gameState !== 'not_started') {
+    if (organization && organization?.gameState !== 'not_started') {
       router.push(`/leaderboard/${organizationId}`);
     }
   }, [organization?.gameState, router, organizationId]);
@@ -125,6 +126,7 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
           </CardContent>
         </Card>
       </section>
+      <LogOutButton />
     </main>
   );
 }

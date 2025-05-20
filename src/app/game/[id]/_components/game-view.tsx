@@ -1,20 +1,38 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { authClient } from '@/lib/auth-client';
 import useGameStore from '@/store/game/game-store';
 import { api } from '@/trpc/react';
-import { Battery, Gamepad2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { GameDashboard } from './game-dashboard';
+import { GameHeader } from './game-header';
+import { MonthSummaryDialog } from './month-summary-dialog';
 
 interface GameViewProps {
   gameId: string;
   organizationId: string;
 }
 
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 export function GameView({ gameId, organizationId }: GameViewProps) {
+  const { data: session } = authClient.useSession();
   const { data: game } = api.game.getGame.useQuery({ id: gameId });
   const { data: organization } = api.organization.getOrganization.useQuery({
     id: organizationId,
@@ -32,6 +50,8 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     resetEnergy,
     resetGame,
     initializePlayer,
+    advanceMonth,
+    syncTimeWithOrganization,
   } = useGameStore();
 
   // Save game data mutation
@@ -75,64 +95,110 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     }
   }, [player.energy, gameId, saveGameData]);
 
-  // Handle action that uses energy
-  const handleEnergyAction = () => {
-    if (useEnergy(10)) {
-      toast.success('Used 10 energy points!');
-    } else {
-      toast.error('Not enough energy!');
+  const [isMonthSummaryOpen, setIsMonthSummaryOpen] = useState(false);
+  const [currentMonthEvents, setCurrentMonthEvents] = useState<typeof history.events>([]);
+  const [currentProgress, setCurrentProgress] = useState(0);
+  const [currentDate, setCurrentDate] = useState('');
+  const [secondsLeft, setSecondsLeft] = useState(90);
+
+  useEffect(() => {
+    if (!organization || organization.gameState !== 'in_progress') {
+      return;
     }
-  };
+
+    // Sync the store time with organization creation date
+    syncTimeWithOrganization(new Date(organization.createdAt));
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const gameStartTime = new Date(organization.createdAt);
+      const elapsedSeconds = Math.floor((now.getTime() - gameStartTime.getTime()) / 1000);
+
+      // Calculate current month (90 seconds per month)
+      const currentMonth = Math.floor(elapsedSeconds / 90);
+      const secondsInCurrentMonth = elapsedSeconds % 90;
+      const progress = (secondsInCurrentMonth / 90) * 100;
+
+      // Calculate date based on elapsed months
+      const startDate = new Date(organization.createdAt);
+      const currentDate = new Date(startDate);
+      currentDate.setMonth(startDate.getMonth() + currentMonth);
+
+      // Update state
+      setCurrentProgress(progress);
+      setCurrentDate(`${MONTHS[currentDate.getMonth()]} ${currentDate.getFullYear()}`);
+      setSecondsLeft(90 - secondsInCurrentMonth);
+
+      // Handle month transition
+      if (secondsInCurrentMonth === 0 && elapsedSeconds > 0) {
+        advanceMonth();
+
+        // Get the current game time for filtering events
+        const currentGameTime = time.year * 10000 + time.month * 100;
+        const nextGameTime = time.year * 10000 + (time.month + 1) * 100;
+
+        // Filter events for the current month
+        const monthEvents = history.events.filter(
+          (event) => event.timestamp >= currentGameTime && event.timestamp < nextGameTime
+        );
+
+        // Sync game data when month ends
+        const gameData = useGameStore.getState();
+        saveGameData.mutate({
+          id: gameId,
+          gameData: {
+            player: gameData.player,
+            jobs: gameData.jobs,
+            assets: gameData.assets,
+            goods: gameData.goods,
+            history: gameData.history,
+            time: gameData.time,
+          },
+        });
+
+        setCurrentMonthEvents(monthEvents);
+        setIsMonthSummaryOpen(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [organization, advanceMonth, history.events, syncTimeWithOrganization, time]);
+
+  // Auto-close month summary dialog after 30 seconds
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isMonthSummaryOpen) {
+      timeout = setTimeout(() => {
+        setIsMonthSummaryOpen(false);
+      }, 30000);
+    }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [isMonthSummaryOpen]);
 
   if (!game || !organization) return null;
 
   return (
-    <main className="container mx-auto flex p-8 gap-8 justify-center items-start fixed inset-0">
-      <Card className="w-full max-w-4xl">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Gamepad2 className="size-6 text-primary" />
-            <CardTitle className="text-2xl">Game - {organization.name}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-muted/50 border">
-              <p className="text-lg font-medium">Game Status</p>
+    <main className="flex flex-col h-screen bg-sidebar">
+      <GameHeader
+        userName={session?.user?.name ?? 'Player'}
+        currentDate={currentDate}
+        progress={currentProgress}
+        secondsLeft={secondsLeft}
+      />
 
-              <div className="mt-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Battery className="size-5 text-primary" />
-                    <span className="font-medium">Energy</span>
-                  </div>
-                  <span>
-                    {player.energy} / {player.maxEnergy}
-                  </span>
-                </div>
+      <div className="flex-1 w-full overflow-y-auto p-8 inset-shadow-sm rounded-4xl bg-white border">
+        <GameDashboard />
+      </div>
 
-                <Progress value={(player.energy / player.maxEnergy) * 100} className="h-2" />
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Energy is used for actions. When it reaches 0, your progress will be saved.
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <Button
-                  onClick={handleEnergyAction}
-                  disabled={player.energy < 10 || saveGameData.isPending}
-                >
-                  Use 10 Energy
-                </Button>
-              </div>
-            </div>
-            {/* Add more game UI components here */}
-          </div>
-        </CardContent>
-      </Card>
+      <MonthSummaryDialog
+        isOpen={isMonthSummaryOpen}
+        onClose={() => setIsMonthSummaryOpen(false)}
+        month={time.monthName}
+        year={time.year}
+        events={currentMonthEvents}
+      />
     </main>
   );
 }

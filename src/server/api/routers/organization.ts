@@ -1,7 +1,7 @@
 import { generateJoinCode } from '@/lib/classroom';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 import { member, organization, user } from '@/server/db/schemas/auth-schema';
-import { and, eq, gt } from 'drizzle-orm';
+import { and, eq, gt, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const organizationRouter = createTRPCRouter({
@@ -130,6 +130,7 @@ export const organizationRouter = createTRPCRouter({
           joinCode: true,
           joinCodeExpiresAt: true,
           gameState: true,
+          createdAt: true,
         },
       });
 

@@ -16,12 +16,12 @@ export function WelcomeView({ organizationId }: WelcomeViewProps) {
       id: organizationId,
     },
     {
-      refetchInterval: 1000, // Poll every second for game state changes
+      refetchInterval: 10000,
     }
   );
 
   useEffect(() => {
-    if (organization?.gameState !== 'not_started') {
+    if (organization && organization?.gameState !== 'not_started') {
       router.push(`/game/${organizationId}`);
     }
   }, [organization?.gameState, router, organizationId]);
@@ -29,7 +29,7 @@ export function WelcomeView({ organizationId }: WelcomeViewProps) {
   if (!organization) return null;
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+    <div className="container flex mx-auto h-screen w-screen flex-col items-center justify-center">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Welkom bij {organization.name}</h1>

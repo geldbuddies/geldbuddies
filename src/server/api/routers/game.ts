@@ -158,4 +158,18 @@ export const gameRouter = createTRPCRouter({
 
       return updatedGame[0];
     }),
+
+  getGamesByOrganization: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const games = await ctx.db.query.game.findMany({
+        where: eq(game.organizationId, input.organizationId),
+      });
+
+      return games;
+    }),
 });

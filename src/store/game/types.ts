@@ -46,10 +46,13 @@ export interface JobsSlice {
       company: string;
       salary: number;
     }>;
+    hoursWorked: number;
+    maxHoursWorked: number;
   };
   applyForJob: (jobId: string) => void;
   quitJob: () => void;
   collectSalary: () => void;
+  addHoursWorked: (hours: number) => boolean;
 }
 
 // Assets slice types
@@ -104,6 +107,7 @@ export interface TimeSlice {
     monthName: string;
   };
   advanceMonth: () => void;
+  syncTimeWithOrganization: (createdAt: Date) => void;
 }
 
 // Combined store type
