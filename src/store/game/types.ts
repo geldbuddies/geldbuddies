@@ -17,6 +17,8 @@ export interface PlayerSlice {
     birthMonth: number;
     birthYear: number;
     isInitialized: boolean;
+    energy: number;
+    maxEnergy: number;
   };
   initializePlayer: (playerData: {
     money: number;
@@ -26,6 +28,8 @@ export interface PlayerSlice {
   }) => void;
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;
+  useEnergy: (amount: number) => boolean;
+  resetEnergy: () => void;
 }
 
 // Jobs slice types
@@ -42,10 +46,13 @@ export interface JobsSlice {
       company: string;
       salary: number;
     }>;
+    hoursWorked: number;
+    maxHoursWorked: number;
   };
   applyForJob: (jobId: string) => void;
   quitJob: () => void;
   collectSalary: () => void;
+  addHoursWorked: (hours: number) => boolean;
 }
 
 // Assets slice types
@@ -100,6 +107,7 @@ export interface TimeSlice {
     monthName: string;
   };
   advanceMonth: () => void;
+  syncTimeWithOrganization: (createdAt: Date) => void;
 }
 
 // Combined store type
