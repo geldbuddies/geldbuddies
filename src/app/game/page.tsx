@@ -1,6 +1,8 @@
 'use client';
 
 import { CharacterSelect } from '@/components/game/character-select';
+import { InvestmentsSection } from '@/components/game/investments-section';
+import { JobsSection } from '@/components/game/jobs-section';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -103,29 +105,30 @@ export default function GamePage() {
             <TabsTrigger value="investments">investeringen</TabsTrigger>
           </TabsList>
           <TabsContent value="career" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Carrière</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {jobs.currentJob ? (
-                  <div className="space-y-2">
-                    <h3 className="font-medium">{jobs.currentJob.title}</h3>
-                    <p className="text-muted-foreground">{jobs.currentJob.company}</p>
-                    <p>Salaris: €{jobs.currentJob.salary.toLocaleString()} / jaar</p>
-                    <p>
-                      Maandelijks Inkomen: €
-                      {Math.round(jobs.currentJob.salary / 12).toLocaleString()}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="text-muted-foreground">
-                    <p>Je bent momenteel werkloos.</p>
-                    <p>Gebruik het Carrière menu links om een baan te vinden.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              {/* Current Job Info */}
+              {jobs.currentJob && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Huidige Baan</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <h3 className="font-medium">{jobs.currentJob.title}</h3>
+                      <p className="text-muted-foreground">{jobs.currentJob.company}</p>
+                      <p>Salaris: €{jobs.currentJob.salary.toLocaleString()} / jaar</p>
+                      <p>
+                        Maandelijks Inkomen: €
+                        {Math.round(jobs.currentJob.salary / 12).toLocaleString()}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Jobs Section */}
+              <JobsSection />
+            </div>
           </TabsContent>
           <TabsContent value="assets" className="mt-4">
             <Card>
@@ -198,6 +201,9 @@ export default function GamePage() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="investments" className="mt-4">
+            <InvestmentsSection />
           </TabsContent>
         </Tabs>
       </div>

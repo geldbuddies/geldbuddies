@@ -1,5 +1,6 @@
 import { StateCreator } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { Job, JobCategory, JobLevel } from '@/data/jobs';
 
 export type HistoryEvent = {
   id: string;
@@ -35,24 +36,23 @@ export interface PlayerSlice {
 // Jobs slice types
 export interface JobsSlice {
   jobs: {
-    currentJob: {
-      title: string;
-      company: string;
-      salary: number;
-    } | null;
-    availableJobs: Array<{
-      id: string;
-      title: string;
-      company: string;
-      salary: number;
-    }>;
+    currentJob: Job | null;
+    availableJobs: Job[];
     hoursWorked: number;
     maxHoursWorked: number;
+    filters: {
+      search: string;
+      category: JobCategory | 'all';
+      level: JobLevel | 'all';
+      minSalary: number;
+      location: string;
+    };
   };
   applyForJob: (jobId: string) => void;
   quitJob: () => void;
   collectSalary: () => void;
   addHoursWorked: (hours: number) => boolean;
+  setJobFilters: (filters: Partial<JobsSlice['jobs']['filters']>) => void;
 }
 
 // Assets slice types
@@ -110,13 +110,40 @@ export interface TimeSlice {
   syncTimeWithOrganization: (createdAt: Date) => void;
 }
 
+// Investments slice types
+export interface InvestmentsSlice {
+  investments: {
+    stocks: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      description: string;
+      currentPrice: number;
+      priceHistory: Array<{
+        timestamp: number;
+        price: number;
+      }>;
+    }>;
+    portfolio: Array<{
+      id: string;
+      stockId: string;
+      shares: number;
+      averageBuyPrice: number;
+    }>;
+  };
+  buyShares: (stockId: string, shares: number) => boolean;
+  sellShares: (portfolioId: string, shares: number) => boolean;
+  updateStockPrices: () => void;
+}
+
 // Combined store type
 export type GameStore = PlayerSlice &
   JobsSlice &
   AssetsSlice &
   GoodsSlice &
   HistorySlice &
-  TimeSlice & {
+  TimeSlice &
+  InvestmentsSlice & {
     resetGame: () => void;
   };
 

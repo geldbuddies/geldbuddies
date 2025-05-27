@@ -7,6 +7,7 @@ import { immer } from 'zustand/middleware/immer';
 import { createAssetsSlice } from './slices/assets-slice';
 import { createGoodsSlice } from './slices/goods-slice';
 import { createHistorySlice } from './slices/history-slice';
+import { createInvestmentsSlice } from './slices/investments-slice';
 import { createJobsSlice } from './slices/jobs-slice';
 import { createPlayerSlice } from './slices/player-slice';
 import { createTimeSlice } from './slices/time-slice';
@@ -78,6 +79,7 @@ const useGameStore = create<GameStore>()(
     ...createGoodsSlice(...a),
     ...createHistorySlice(...a),
     ...createTimeSlice(...a),
+    ...createInvestmentsSlice(...a),
     ...resetGame(a[0]),
   }))
 );

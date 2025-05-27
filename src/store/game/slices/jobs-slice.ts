@@ -1,42 +1,46 @@
 import { GameSlice, JobsSlice } from '../types';
+import { jobs as availableJobs } from '@/data/jobs';
+import { calculateAge } from '@/lib/utils';
 
 export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
   jobs: {
     currentJob: null,
-    availableJobs: [
-      {
-        id: '1',
-        title: 'Winkelmedewerker',
-        company: 'SuperMarkt',
-        salary: 25000,
-      },
-      {
-        id: '2',
-        title: 'Kantoorassistent',
-        company: 'Zakelijk B.V.',
-        salary: 35000,
-      },
-      {
-        id: '3',
-        title: 'Software Ontwikkelaar',
-        company: 'Tech Innovaties',
-        salary: 80000,
-      },
-    ],
+    availableJobs,
     hoursWorked: 0,
     maxHoursWorked: 160,
+    filters: {
+      search: '',
+      category: 'all',
+      level: 'all',
+      minSalary: 0,
+      location: '',
+    },
+  },
+
+  setJobFilters: (filters) => {
+    set((state) => {
+      state.jobs.filters = { ...state.jobs.filters, ...filters };
+    });
   },
 
   applyForJob: (jobId) => {
     const job = get().jobs.availableJobs.find((j) => j.id === jobId);
     if (!job) return;
 
+    // Check if player meets requirements
+    const player = get().player;
+    const playerAge = calculateAge(player.birthMonth, player.birthYear, get().time.month, get().time.year);
+
+    if (job.requirements.minAge && playerAge < job.requirements.minAge) {
+      get().addHistoryEvent({
+        type: 'job',
+        description: `Sollicitatie afgewezen: Je bent te jong voor deze functie (minimum leeftijd: ${job.requirements.minAge})`,
+      });
+      return;
+    }
+
     set((state) => {
-      state.jobs.currentJob = {
-        title: job.title,
-        company: job.company,
-        salary: job.salary,
-      };
+      state.jobs.currentJob = job;
       state.jobs.hoursWorked = 0;
     });
 
@@ -66,13 +70,10 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
 
   addHoursWorked: (hours) => {
     if (!get().jobs.currentJob) return false;
-    console.log(hours);
 
     set((state) => {
       state.jobs.hoursWorked = Math.min(state.jobs.hoursWorked + hours, state.jobs.maxHoursWorked);
     });
-
-    console.log(get().jobs.hoursWorked, get().jobs.maxHoursWorked);
 
     return true;
   },

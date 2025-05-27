@@ -20,61 +20,43 @@ export const createTimeSlice: GameSlice<TimeSlice> = (set, get) => ({
   time: {
     month: 1,
     year: 2025,
-    monthName: 'Januari',
+    monthName: MONTHS[0],
   },
 
   advanceMonth: () => {
-    // Get current state for updating
-    const prevState = get().time;
-    let newMonth = prevState.month + 1;
-    let newYear = prevState.year;
-
-    // Handle year rollover
-    if (newMonth > 12) {
-      newMonth = 1;
-      newYear += 1;
-    }
-
-    // Calculate month name
-    const newMonthName = MONTHS[newMonth - 1];
-
-    // Update the time and player state
+    // Update time
     set((state) => {
-      state.time.month = newMonth;
-      state.time.year = newYear;
-      state.time.monthName = newMonthName;
-      state.player.energy = 100;
+      if (state.time.month === 12) {
+        state.time.month = 1;
+        state.time.year++;
+      } else {
+        state.time.month++;
+      }
+      state.time.monthName = MONTHS[state.time.month - 1];
     });
 
-    get().collectSalary();
+    // Update stock prices
+    get().updateStockPrices();
+
+    // Pay monthly costs
     get().payMonthlyCosts();
 
-    // Age player if it's their birthmonth
-    if (newMonth === get().player.birthMonth) {
-      get().addHistoryEvent({
-        type: 'life',
-        description: 'Je bent jarig geworden!',
-        amount: 100,
-      });
-    }
+    // Reset energy
+    get().resetEnergy();
+
+    // Add to history
+    get().addHistoryEvent({
+      type: 'life',
+      description: `Nieuwe maand: ${get().time.monthName} ${get().time.year}`,
+    });
   },
 
   // New function to sync time with organization creation date
   syncTimeWithOrganization: (createdAt: Date) => {
-    const now = new Date();
-    const elapsedSeconds = Math.floor((now.getTime() - createdAt.getTime()) / 1000);
-    const currentMonth = Math.floor(elapsedSeconds / 90); // 90 seconds per month
-
-    // Calculate the new date based on elapsed months
-    const startDate = new Date(createdAt);
-    const currentDate = new Date(startDate);
-    currentDate.setMonth(startDate.getMonth() + currentMonth);
-
-    // Update the time state
     set((state) => {
-      state.time.month = currentDate.getMonth() + 1; // +1 because months are 0-indexed
-      state.time.year = currentDate.getFullYear();
-      state.time.monthName = MONTHS[currentDate.getMonth()];
+      state.time.month = createdAt.getMonth() + 1;
+      state.time.year = createdAt.getFullYear();
+      state.time.monthName = MONTHS[state.time.month - 1];
     });
   },
 });
