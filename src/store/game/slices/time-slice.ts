@@ -51,12 +51,15 @@ export const createTimeSlice: GameSlice<TimeSlice> = (set, get) => ({
     });
   },
 
-  // New function to sync time with organization creation date
-  syncTimeWithOrganization: (createdAt: Date) => {
+  // Updated function to sync time with organization creation date
+  syncTimeWithOrganization: (targetDate: Date) => {
     set((state) => {
-      state.time.month = createdAt.getMonth() + 1;
-      state.time.year = createdAt.getFullYear();
+      state.time.month = targetDate.getMonth() + 1;
+      state.time.year = targetDate.getFullYear();
       state.time.monthName = MONTHS[state.time.month - 1];
     });
+
+    // Update stock prices to reflect the new time
+    get().updateStockPrices();
   },
 });

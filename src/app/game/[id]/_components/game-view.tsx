@@ -106,8 +106,16 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
       return;
     }
 
-    // Sync the store time with organization creation date
-    syncTimeWithOrganization(new Date(organization.createdAt));
+    // Calculate initial game time based on elapsed time since organization creation
+    const now = new Date();
+    const gameStartTime = new Date(organization.createdAt);
+    const elapsedSeconds = Math.floor((now.getTime() - gameStartTime.getTime()) / 1000);
+    const currentMonth = Math.floor(elapsedSeconds / 90);
+    
+    // Sync the store time with organization creation date plus elapsed months
+    const targetDate = new Date(organization.createdAt);
+    targetDate.setMonth(targetDate.getMonth() + currentMonth);
+    syncTimeWithOrganization(targetDate);
 
     const interval = setInterval(() => {
       const now = new Date();
