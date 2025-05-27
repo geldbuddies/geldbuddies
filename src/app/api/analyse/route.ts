@@ -1,5 +1,3 @@
-// API Route for fetching financial data from DB
-
 import { NextResponse } from "next/server";
 import { fetchDomainData } from "@/analysis/fetch_data";
 import { GlobalScoreConfig } from "../../../analysis/config/global-score-config";
