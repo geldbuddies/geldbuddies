@@ -4,13 +4,45 @@ import { NextResponse } from "next/server";
 import { fetchDomainData } from "@/analysis/fetch_data";
 import { GlobalScoreConfig } from "../../../analysis/config/global-score-config";
 import { DomainScoreCalculator } from "../../../analysis/score-calculator";
+import { db } from "@/server/db";
+import { and, eq } from "drizzle-orm";
+import { session, member } from "@/server/db/schemas/auth-schema";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(req: Request) {
   try {
-    const userId = 1; // Hardcoded for now
+    // Get the session token from the cookie
+    const cookieHeader = req.headers.get("cookie");
+    const sessionToken = cookieHeader?.match(/(?<=session=)[^;]+/)?.[0];
 
-    const domainData = await fetchDomainData(userId);
+    if (!sessionToken) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Get the active organization ID from the session
+    const userSession = await db.query.session.findFirst({
+      where: eq(session.token, sessionToken),
+    });
+
+    if (!userSession?.activeOrganizationId) {
+      return NextResponse.json(
+        { error: "No active organization" },
+        { status: 400 }
+      );
+    }
+
+    // Get the member ID for the user in this organization
+    const memberRecord = await db.query.member.findFirst({
+      where: and(
+        eq(member.userId, userSession.userId),
+        eq(member.organizationId, userSession.activeOrganizationId)
+      ),
+    });
+
+    if (!memberRecord) {
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    }
+
+    const domainData = await fetchDomainData(memberRecord.id);
 
     if (domainData.length === 0) {
       return NextResponse.json([]);

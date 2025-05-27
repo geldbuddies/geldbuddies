@@ -2,7 +2,7 @@ import { fetchDomainData } from "./fetch_data";
 import { DomainScoreCalculator, ScoreBreakdown } from "./score-calculator";
 import { GlobalScoreConfig } from "./config/global-score-config";
 
-export async function calculateUserFinancialScores(userId: number): Promise<ScoreBreakdown[]> {
+export async function calculateUserFinancialScores(userId: string): Promise<ScoreBreakdown[]> {
   try {
     const domains = await fetchDomainData(userId);
     

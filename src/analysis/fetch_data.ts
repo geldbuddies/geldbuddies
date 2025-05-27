@@ -4,7 +4,7 @@ import { FinancialDomain, FinancialDomainType } from "./score-calculator";
 import { eq } from "drizzle-orm";
 
 export async function fetchDomainData(
-  playerId: number
+  playerId: string
 ): Promise<FinancialDomain[]> {
   try {
     const [
@@ -26,7 +26,7 @@ export async function fetchDomainData(
 }
 
 async function fetchMoneyData(
-  playerId: number
+  playerId: string
 ): Promise<FinancialDomain | null> {
   try {
     const result = await db
