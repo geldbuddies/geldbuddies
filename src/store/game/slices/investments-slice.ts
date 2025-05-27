@@ -2,14 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { GameSlice, InvestmentsSlice } from '../types';
 
 // Initial stock data
-const initialStocks = [
+export const initialStocks = [
   {
     id: uuidv4(),
     symbol: 'TECH',
     name: 'TechCorp NV',
     description: 'Een innovatief technologiebedrijf',
     currentPrice: 150,
-    priceHistory: [],
+    priceHistory: [{ timestamp: Date.now(), price: 150 }],
   },
   {
     id: uuidv4(),
@@ -17,7 +17,7 @@ const initialStocks = [
     name: 'GroenEnergie BV',
     description: 'Duurzame energie oplossingen',
     currentPrice: 75,
-    priceHistory: [],
+    priceHistory: [{ timestamp: Date.now(), price: 75 }],
   },
   {
     id: uuidv4(),
@@ -25,7 +25,7 @@ const initialStocks = [
     name: 'NederBank',
     description: 'Grootste bank van Nederland',
     currentPrice: 45,
-    priceHistory: [],
+    priceHistory: [{ timestamp: Date.now(), price: 45 }],
   },
   {
     id: uuidv4(),
@@ -33,7 +33,7 @@ const initialStocks = [
     name: 'FoodTech',
     description: 'Innovatieve voedselproductie',
     currentPrice: 30,
-    priceHistory: [],
+    priceHistory: [{ timestamp: Date.now(), price: 30 }],
   },
   {
     id: uuidv4(),
@@ -41,16 +41,13 @@ const initialStocks = [
     name: 'RetailGigant',
     description: 'Grootste retailketen van de Benelux',
     currentPrice: 95,
-    priceHistory: [],
+    priceHistory: [{ timestamp: Date.now(), price: 95 }],
   },
 ];
 
 export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) => ({
   investments: {
-    stocks: initialStocks.map(stock => ({
-      ...stock,
-      priceHistory: [{ timestamp: Date.now(), price: stock.currentPrice }],
-    })),
+    stocks: initialStocks,
     portfolio: [],
   },
 
@@ -125,6 +122,7 @@ export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) =>
 
   updateStockPrices: () => {
     const time = get().time;
+    const currentTimestamp = new Date(time.year, time.month - 1).getTime();
     
     set(state => {
       state.investments.stocks.forEach(stock => {
@@ -132,18 +130,25 @@ export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) =>
         const changePercent = (Math.random() * 0.35) - 0.15;
         const newPrice = Math.max(1, Math.round(stock.currentPrice * (1 + changePercent)));
         
-        // Add to price history with game time
-        stock.priceHistory.push({
-          timestamp: new Date(time.year, time.month - 1).getTime(),
-          price: stock.currentPrice,
-        });
+        // Only add to price history if this timestamp doesn't exist yet
+        const hasCurrentTimestamp = stock.priceHistory.some(
+          entry => entry.timestamp === currentTimestamp
+        );
         
-        // Keep only last 24 months of data points
-        if (stock.priceHistory.length > 24) {
-          stock.priceHistory.shift();
+        if (!hasCurrentTimestamp) {
+          // Add to price history with game time
+          stock.priceHistory.push({
+            timestamp: currentTimestamp,
+            price: stock.currentPrice,
+          });
+          
+          // Keep only last 24 months of data points
+          if (stock.priceHistory.length > 24) {
+            stock.priceHistory.shift();
+          }
+          
+          stock.currentPrice = newPrice;
         }
-        
-        stock.currentPrice = newPrice;
       });
     });
   },

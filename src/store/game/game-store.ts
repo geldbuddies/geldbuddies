@@ -7,15 +7,16 @@ import { immer } from 'zustand/middleware/immer';
 import { createAssetsSlice } from './slices/assets-slice';
 import { createGoodsSlice } from './slices/goods-slice';
 import { createHistorySlice } from './slices/history-slice';
-import { createInvestmentsSlice } from './slices/investments-slice';
+import { createInvestmentsSlice, initialStocks } from './slices/investments-slice';
 import { createJobsSlice } from './slices/jobs-slice';
 import { createPlayerSlice } from './slices/player-slice';
 import { createTimeSlice } from './slices/time-slice';
-import { GameStore } from './types';
+import { GameStore, Stock } from './types';
 
 // Function to reset the game
 const resetGame = (set: any) => ({
   resetGame: () => {
+    const currentTime = Date.now();
     set(
       {
         player: {
@@ -64,6 +65,13 @@ const resetGame = (set: any) => ({
           year: 2025,
           monthName: 'Januari',
         },
+        investments: {
+          stocks: initialStocks.map((stock: Stock) => ({
+            ...stock,
+            priceHistory: [{ timestamp: currentTime, price: stock.currentPrice }],
+          })),
+          portfolio: [],
+        },
       },
       true
     );
@@ -72,16 +80,30 @@ const resetGame = (set: any) => ({
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  immer((...a) => ({
-    ...createPlayerSlice(...a),
-    ...createJobsSlice(...a),
-    ...createAssetsSlice(...a),
-    ...createGoodsSlice(...a),
-    ...createHistorySlice(...a),
-    ...createTimeSlice(...a),
-    ...createInvestmentsSlice(...a),
-    ...resetGame(a[0]),
-  }))
+  persist(
+    immer((...a) => ({
+      ...createPlayerSlice(...a),
+      ...createJobsSlice(...a),
+      ...createAssetsSlice(...a),
+      ...createGoodsSlice(...a),
+      ...createHistorySlice(...a),
+      ...createTimeSlice(...a),
+      ...createInvestmentsSlice(...a),
+      ...resetGame(a[0]),
+    })),
+    {
+      name: 'game-storage',
+      partialize: (state) => ({
+        player: state.player,
+        jobs: state.jobs,
+        assets: state.assets,
+        goods: state.goods,
+        history: state.history,
+        time: state.time,
+        investments: state.investments,
+      }),
+    }
+  )
 );
 
 export default useGameStore;

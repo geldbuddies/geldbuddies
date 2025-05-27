@@ -120,19 +120,21 @@ export interface TimeSlice {
 }
 
 // Investments slice types
+export interface Stock {
+  id: string;
+  symbol: string;
+  name: string;
+  description: string;
+  currentPrice: number;
+  priceHistory: Array<{
+    timestamp: number;
+    price: number;
+  }>;
+}
+
 export interface InvestmentsSlice {
   investments: {
-    stocks: Array<{
-      id: string;
-      symbol: string;
-      name: string;
-      description: string;
-      currentPrice: number;
-      priceHistory: Array<{
-        timestamp: number;
-        price: number;
-      }>;
-    }>;
+    stocks: Stock[];
     portfolio: Array<{
       id: string;
       stockId: string;

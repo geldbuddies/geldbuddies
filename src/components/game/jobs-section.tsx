@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { JobCategory, JobLevel } from '@/data/jobs';
 import useGameStore from '@/store/game/game-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,9 +15,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { calculateAge } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { JobDetailsDialog } from './job-details-dialog';
 
 export function JobsSection() {
   const { jobs, player, time, setJobFilters, applyForJob } = useGameStore();
+  const [selectedJob, setSelectedJob] = useState<(typeof jobs.availableJobs)[0] | null>(null);
 
   // Filter jobs based on current filters
   const filteredJobs = jobs.availableJobs.filter((job) => {
@@ -176,96 +179,125 @@ export function JobsSection() {
           const canApply = missingRequirements.length === 0;
 
           return (
-            <Card key={job.id} className={!canApply ? 'opacity-60' : undefined}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl">{job.title}</CardTitle>
-                    <p className="text-muted-foreground">{job.company}</p>
+            <div
+              key={job.id}
+              className="cursor-pointer"
+              onClick={() => setSelectedJob(job)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setSelectedJob(job);
+                }
+              }}
+            >
+              <Card
+                className={`${
+                  !canApply ? 'opacity-60' : ''
+                } hover:bg-accent/50 transition-colors h-full border-2 hover:border-primary`}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl">{job.title}</CardTitle>
+                      <p className="text-muted-foreground">{job.company}</p>
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        applyForJob(job.id);
+                      }}
+                      disabled={!canApply || jobs.currentJob?.id === job.id}
+                    >
+                      {jobs.currentJob?.id === job.id ? 'Huidige baan' : 'Solliciteer'}
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => applyForJob(job.id)}
-                    disabled={!canApply || jobs.currentJob?.id === job.id}
-                  >
-                    {jobs.currentJob?.id === job.id ? 'Huidige baan' : 'Solliciteer'}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p>{job.description}</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium">Salaris</p>
-                      <p>€{job.salary.toLocaleString()} / jaar</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p>{job.description}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium">Salaris</p>
+                        <p>€{job.salary.toLocaleString()} / jaar</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Locatie</p>
+                        <p>{job.location}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Niveau</p>
+                        <p className="capitalize">{job.level}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Categorie</p>
+                        <p className="capitalize">{job.category}</p>
+                      </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Locatie</p>
-                      <p>{job.location}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Niveau</p>
-                      <p className="capitalize">{job.level}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Categorie</p>
-                      <p className="capitalize">{job.category}</p>
+                      <p className="text-sm font-medium mb-2">Vereisten</p>
+                      <div className="space-y-2">
+                        {job.requirements.minAge && (
+                          <Badge
+                            variant={
+                              job.requirements.minAge && playerAge < job.requirements.minAge
+                                ? 'destructive'
+                                : 'outline'
+                            }
+                          >
+                            Minimum leeftijd: {job.requirements.minAge} jaar
+                          </Badge>
+                        )}
+                        {job.requirements.education && (
+                          <Badge
+                            variant={
+                              !player.education?.includes(job.requirements.education)
+                                ? 'destructive'
+                                : 'outline'
+                            }
+                          >
+                            Opleiding: {job.requirements.education}
+                          </Badge>
+                        )}
+                        {job.requirements.experience !== undefined && job.requirements.experience > 0 && (
+                          <Badge
+                            variant={
+                              totalExperience < job.requirements.experience ? 'destructive' : 'outline'
+                            }
+                          >
+                            Ervaring: {job.requirements.experience} jaar
+                          </Badge>
+                        )}
+                        {job.requirements.skills && job.requirements.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {job.requirements.skills.map((skill) => (
+                              <Badge
+                                key={skill}
+                                variant={!player.skills?.includes(skill) ? 'destructive' : 'outline'}
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium mb-2">Vereisten</p>
-                    <div className="space-y-2">
-                      {job.requirements.minAge && (
-                        <Badge
-                          variant={
-                            job.requirements.minAge && playerAge < job.requirements.minAge
-                              ? 'destructive'
-                              : 'outline'
-                          }
-                        >
-                          Minimum leeftijd: {job.requirements.minAge} jaar
-                        </Badge>
-                      )}
-                      {job.requirements.education && (
-                        <Badge
-                          variant={
-                            !player.education?.includes(job.requirements.education)
-                              ? 'destructive'
-                              : 'outline'
-                          }
-                        >
-                          Opleiding: {job.requirements.education}
-                        </Badge>
-                      )}
-                      {job.requirements.experience !== undefined && job.requirements.experience > 0 && (
-                        <Badge
-                          variant={
-                            totalExperience < job.requirements.experience ? 'destructive' : 'outline'
-                          }
-                        >
-                          Ervaring: {job.requirements.experience} jaar
-                        </Badge>
-                      )}
-                      {job.requirements.skills && job.requirements.skills.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {job.requirements.skills.map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant={!player.skills?.includes(skill) ? 'destructive' : 'outline'}
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           );
         })}
       </div>
+
+      {/* Job Details Dialog */}
+      {selectedJob && (
+        <JobDetailsDialog
+          job={selectedJob}
+          isOpen={true}
+          onClose={() => setSelectedJob(null)}
+        />
+      )}
     </div>
   );
 } 
