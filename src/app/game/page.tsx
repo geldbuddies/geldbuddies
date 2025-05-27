@@ -100,6 +100,7 @@ export default function GamePage() {
             <TabsTrigger value="career">Carrière</TabsTrigger>
             <TabsTrigger value="assets">Bezittingen</TabsTrigger>
             <TabsTrigger value="lifestyle">Levensstijl</TabsTrigger>
+            <TabsTrigger value="investments">investeringen</TabsTrigger>
           </TabsList>
           <TabsContent value="career" className="mt-4">
             <Card>
