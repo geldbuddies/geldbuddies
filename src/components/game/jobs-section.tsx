@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { calculateAge } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 export function JobsSection() {
   const { jobs, player, time, setJobFilters, applyForJob } = useGameStore();
@@ -37,6 +38,57 @@ export function JobsSection() {
 
   // Calculate player's age
   const playerAge = calculateAge(player.birthMonth, player.birthYear, time.month, time.year);
+
+  // Calculate total work experience
+  const calculateTotalExperience = () => {
+    return player.workExperience?.reduce((total, exp) => {
+      if (!exp.endDate) {
+        const currentDate = { month: time.month, year: time.year };
+        return (
+          total +
+          (currentDate.year - exp.startDate.year + (currentDate.month - exp.startDate.month) / 12)
+        );
+      }
+      return (
+        total +
+        (exp.endDate.year - exp.startDate.year + (exp.endDate.month - exp.startDate.month) / 12)
+      );
+    }, 0) || 0;
+  };
+
+  const totalExperience = calculateTotalExperience();
+
+  // Check if player meets job requirements
+  const checkJobRequirements = (job: (typeof jobs.availableJobs)[0]) => {
+    const requirements = [];
+
+    // Check age
+    if (job.requirements.minAge && playerAge < job.requirements.minAge) {
+      requirements.push(`Minimum leeftijd: ${job.requirements.minAge} jaar`);
+    }
+
+    // Check education
+    if (job.requirements.education && !player.education?.includes(job.requirements.education)) {
+      requirements.push(`Opleiding: ${job.requirements.education}`);
+    }
+
+    // Check experience
+    if (job.requirements.experience && job.requirements.experience > totalExperience) {
+      requirements.push(`Werkervaring: ${job.requirements.experience} jaar`);
+    }
+
+    // Check skills
+    if (job.requirements.skills && job.requirements.skills.length > 0) {
+      const missingSkills = job.requirements.skills.filter(
+        (skill) => !player.skills?.includes(skill)
+      );
+      if (missingSkills.length > 0) {
+        requirements.push(`Skills: ${missingSkills.join(', ')}`);
+      }
+    }
+
+    return requirements;
+  };
 
   return (
     <div className="space-y-6">
@@ -120,10 +172,11 @@ export function JobsSection() {
       {/* Job Listings */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredJobs.map((job) => {
-          const meetsAgeRequirement = !job.requirements.minAge || playerAge >= job.requirements.minAge;
+          const missingRequirements = checkJobRequirements(job);
+          const canApply = missingRequirements.length === 0;
 
           return (
-            <Card key={job.id} className={!meetsAgeRequirement ? 'opacity-60' : undefined}>
+            <Card key={job.id} className={!canApply ? 'opacity-60' : undefined}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
@@ -132,7 +185,7 @@ export function JobsSection() {
                   </div>
                   <Button
                     onClick={() => applyForJob(job.id)}
-                    disabled={!meetsAgeRequirement || jobs.currentJob?.id === job.id}
+                    disabled={!canApply || jobs.currentJob?.id === job.id}
                   >
                     {jobs.currentJob?.id === job.id ? 'Huidige baan' : 'Solliciteer'}
                   </Button>
@@ -160,21 +213,52 @@ export function JobsSection() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Vereisten</p>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    <p className="text-sm font-medium mb-2">Vereisten</p>
+                    <div className="space-y-2">
                       {job.requirements.minAge && (
-                        <li className={!meetsAgeRequirement ? 'text-destructive' : undefined}>
+                        <Badge
+                          variant={
+                            job.requirements.minAge && playerAge < job.requirements.minAge
+                              ? 'destructive'
+                              : 'outline'
+                          }
+                        >
                           Minimum leeftijd: {job.requirements.minAge} jaar
-                        </li>
+                        </Badge>
                       )}
-                      {job.requirements.education && <li>Opleiding: {job.requirements.education}</li>}
+                      {job.requirements.education && (
+                        <Badge
+                          variant={
+                            !player.education?.includes(job.requirements.education)
+                              ? 'destructive'
+                              : 'outline'
+                          }
+                        >
+                          Opleiding: {job.requirements.education}
+                        </Badge>
+                      )}
                       {job.requirements.experience !== undefined && job.requirements.experience > 0 && (
-                        <li>Ervaring: {job.requirements.experience} jaar</li>
+                        <Badge
+                          variant={
+                            totalExperience < job.requirements.experience ? 'destructive' : 'outline'
+                          }
+                        >
+                          Ervaring: {job.requirements.experience} jaar
+                        </Badge>
                       )}
                       {job.requirements.skills && job.requirements.skills.length > 0 && (
-                        <li>Skills: {job.requirements.skills.join(', ')}</li>
+                        <div className="flex flex-wrap gap-2">
+                          {job.requirements.skills.map((skill) => (
+                            <Badge
+                              key={skill}
+                              variant={!player.skills?.includes(skill) ? 'destructive' : 'outline'}
+                            >
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
                       )}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </CardContent>

@@ -20,6 +20,15 @@ export interface PlayerSlice {
     isInitialized: boolean;
     energy: number;
     maxEnergy: number;
+    education: string[];
+    skills: string[];
+    workExperience: Array<{
+      jobId: string;
+      title: string;
+      company: string;
+      startDate: { month: number; year: number };
+      endDate?: { month: number; year: number };
+    }>;
   };
   initializePlayer: (playerData: {
     money: number;

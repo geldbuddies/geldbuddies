@@ -31,6 +31,7 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
     const player = get().player;
     const playerAge = calculateAge(player.birthMonth, player.birthYear, get().time.month, get().time.year);
 
+    // Check age requirement
     if (job.requirements.minAge && playerAge < job.requirements.minAge) {
       get().addHistoryEvent({
         type: 'job',
@@ -39,9 +40,78 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       return;
     }
 
+    // Check education requirement
+    if (job.requirements.education && !player.education?.includes(job.requirements.education)) {
+      get().addHistoryEvent({
+        type: 'job',
+        description: `Sollicitatie afgewezen: Je hebt niet de juiste opleiding (${job.requirements.education})`,
+      });
+      return;
+    }
+
+    // Check experience requirement
+    if (job.requirements.experience && job.requirements.experience > 0) {
+      const totalExperience = player.workExperience?.reduce((total, exp) => {
+        if (!exp.endDate) {
+          const currentDate = { month: get().time.month, year: get().time.year };
+          return total + calculateExperienceYears(exp.startDate, currentDate);
+        }
+        return total + calculateExperienceYears(exp.startDate, exp.endDate);
+      }, 0) || 0;
+
+      if (totalExperience < job.requirements.experience) {
+        get().addHistoryEvent({
+          type: 'job',
+          description: `Sollicitatie afgewezen: Je hebt niet genoeg werkervaring (${job.requirements.experience} jaar vereist)`,
+        });
+        return;
+      }
+    }
+
+    // Check skills requirements
+    if (job.requirements.skills && job.requirements.skills.length > 0) {
+      const missingSkills = job.requirements.skills.filter(
+        (skill) => !player.skills?.includes(skill)
+      );
+
+      if (missingSkills.length > 0) {
+        get().addHistoryEvent({
+          type: 'job',
+          description: `Sollicitatie afgewezen: Je mist de volgende vaardigheden: ${missingSkills.join(', ')}`,
+        });
+        return;
+      }
+    }
+
+    // All requirements met, proceed with hiring
     set((state) => {
       state.jobs.currentJob = job;
       state.jobs.hoursWorked = 0;
+
+      // Add to work experience
+      if (!state.player.workExperience) {
+        state.player.workExperience = [];
+      }
+
+      // If player has a current job, end it
+      const currentExperience = state.player.workExperience.find((exp) => !exp.endDate);
+      if (currentExperience) {
+        currentExperience.endDate = {
+          month: get().time.month,
+          year: get().time.year,
+        };
+      }
+
+      // Add new job to experience
+      state.player.workExperience.push({
+        jobId: job.id,
+        title: job.title,
+        company: job.company,
+        startDate: {
+          month: get().time.month,
+          year: get().time.year,
+        },
+      });
     });
 
     // Add to history
@@ -58,6 +128,15 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       set((state) => {
         state.jobs.currentJob = null;
         state.jobs.hoursWorked = 0;
+
+        // Update work experience end date
+        const currentExperience = state.player.workExperience?.find((exp) => !exp.endDate);
+        if (currentExperience) {
+          currentExperience.endDate = {
+            month: get().time.month,
+            year: get().time.year,
+          };
+        }
       });
 
       // Add to history
@@ -103,3 +182,13 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
     }
   },
 });
+
+// Helper function to calculate years of experience between two dates
+function calculateExperienceYears(
+  startDate: { month: number; year: number },
+  endDate: { month: number; year: number }
+) {
+  const yearDiff = endDate.year - startDate.year;
+  const monthDiff = endDate.month - startDate.month;
+  return yearDiff + monthDiff / 12;
+}
