@@ -10,9 +10,10 @@ export async function GET(req: Request) {
   try {
     // Get the session token from the cookie
     const cookieHeader = req.headers.get("cookie");
-    const sessionToken = cookieHeader?.match(/(?<=session=)[^;]+/)?.[0];
+    const sessionToken = cookieHeader?.match(/(?<=session_token=)[^;]+/)?.[0];
 
     if (!sessionToken) {
+      console.error("No session token found in cookie");
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
@@ -22,6 +23,7 @@ export async function GET(req: Request) {
     });
 
     if (!userSession?.activeOrganizationId) {
+      console.error("No active organization found for this session");
       return NextResponse.json(
         { error: "No active organization" },
         { status: 400 }
