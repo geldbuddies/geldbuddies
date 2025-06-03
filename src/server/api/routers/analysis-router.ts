@@ -5,6 +5,7 @@ import { GlobalScoreConfig } from "@/analysis/config/global-score-config";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { member } from "@/server/db/schemas";
 
 export type AnalysisResponse = {
   status: "NO_CLASSROOM" | "NO_GAME_DATA" | "HAS_DATA";
@@ -19,25 +20,15 @@ export const analysisRouter = createTRPCRouter({
       async ({ input, ctx }): Promise<AnalysisResponse> => {
         const { memberId, organizationId } = input;
 
-        // Check if the requested member is in the organization/classroom
-        const userMemberships = await db.query.member.findFirst({
-          where: (m) =>
-            eq(m.userId, memberId) &&
-            eq(m.organizationId, organizationId),
-        });
-
-        if (!userMemberships) {
+        // Fetch domain data for the requested member
+        const domainData = await fetchDomainData(memberId);
+        
+        if (!domainData) {
           return {
             status: "NO_CLASSROOM",
-            message:
-              "Deze gebruiker is niet toegevoegd aan deze klas.",
+            message: "Deze gebruiker is niet verbonden aan een klas.",
           };
         }
-
-        // Fetch domain data for the requested member
-        const domainData = await fetchDomainData(userMemberships.id);
-
-        console.log("Fetched domain data:", domainData);
 
         if (domainData.length === 0) {
           return {
