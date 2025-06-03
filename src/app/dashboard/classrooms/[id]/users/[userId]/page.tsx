@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/trpc/server';
-import { ExternalLink, UserIcon } from 'lucide-react';
+import { ExternalLink, UserIcon, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { Fragment } from 'react';
 import { UserDetails } from './_components/user-details';
+import { UserAnalysis } from './_components/analyse';
 
 interface UserPageProps {
   params: {
@@ -38,22 +39,32 @@ export default async function UserPage({ params }: UserPageProps) {
           </Button>
         </div>
       </header>
-      <section className="flex flex-col h-screen bg-sidebar">
-        <div className="flex-1 w-full overflow-y-auto p-8">
-          <div className="max-w-7xl mx-auto">
-            <Card className="relative overflow-hidden bg-gradient-to-br from-background to-muted/50 backdrop-blur-sm border-muted/50 shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-50" />
-              <CardHeader className="pb-2 relative">
-                <div className="flex items-center gap-2">
-                  <UserIcon className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg">Gebruiker details</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="relative">
-                <UserDetails organizationId={id} userId={userId} />
-              </CardContent>
-            </Card>
-          </div>
+      <section className="flex flex-col h-fit bg-sidebar">
+        <div className="w-full p-8 max-w-7xl mx-auto">
+          <Card className="relative overflow-hidden bg-gradient-to-br from-background to-muted/50 backdrop-blur-sm border-muted/50 shadow-lg hover:shadow-xl transition-all duration-300 mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-50" />
+            <CardHeader className="pb-2 relative">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg">Financiële Analyse</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="relative">
+              <UserAnalysis organizationId={id} userId={userId} />
+            </CardContent>
+          </Card>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-background to-muted/50 backdrop-blur-sm border-muted/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-50" />
+            <CardHeader className="pb-2 relative">
+              <div className="flex items-center gap-2">
+                <UserIcon className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg">Gebruiker details</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="relative">
+              <UserDetails organizationId={id} userId={userId} />
+            </CardContent>
+          </Card>
         </div>
       </section>
     </Fragment>

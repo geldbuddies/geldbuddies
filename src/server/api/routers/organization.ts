@@ -184,6 +184,7 @@ export const organizationRouter = createTRPCRouter({
       const members = await ctx.db
         .select({
           id: member.id,
+          userId: member.userId,
           user: {
             name: user.name,
           },

@@ -6,7 +6,6 @@ const navItems: NavItemProps[] = [
   { label: 'Over Ons', href: '/about' },
   { label: 'Contact', href: '/contact' },
   { label: 'Docenten', href: '/dashboard' },
-  { label: 'Analyse', href: '/analysis' },
   { label: 'Join Class', href: '/join', isButton: true, variant: 'outline' },
 ];
 
