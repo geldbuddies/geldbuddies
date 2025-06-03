@@ -5,6 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 
 // Import slices
 import { createAssetsSlice } from './slices/assets-slice';
+import { createEducationSlice, availableEducations } from './slices/education-slice';
 import { createGoodsSlice } from './slices/goods-slice';
 import { createHistorySlice } from './slices/history-slice';
 import { createInvestmentsSlice, initialStocks } from './slices/investments-slice';
@@ -25,6 +26,7 @@ const resetGame = (set: any) => ({
           birthMonth: 1,
           birthYear: 2000,
           isInitialized: false,
+          education: [],
         },
         jobs: {
           currentJob: null,
@@ -72,6 +74,10 @@ const resetGame = (set: any) => ({
           })),
           portfolio: [],
         },
+        education: {
+          currentEducation: null,
+          availableEducations: availableEducations,
+        },
       },
       true
     );
@@ -89,6 +95,7 @@ const useGameStore = create<GameStore>()(
       ...createHistorySlice(...a),
       ...createTimeSlice(...a),
       ...createInvestmentsSlice(...a),
+      ...createEducationSlice(...a),
       ...resetGame(a[0]),
     })),
     {
@@ -101,6 +108,7 @@ const useGameStore = create<GameStore>()(
         history: state.history,
         time: state.time,
         investments: state.investments,
+        education: state.education,
       }),
     }
   )

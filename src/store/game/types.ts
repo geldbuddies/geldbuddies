@@ -147,6 +147,37 @@ export interface InvestmentsSlice {
   updateStockPrices: () => void;
 }
 
+// Education types
+export interface Education {
+  id: string;
+  name: string;
+  description: string;
+  duration: number; // in months
+  cost: number;
+  energyCost: number;
+  requirements?: {
+    minAge?: number;
+    education?: string[];
+  };
+}
+
+export interface EducationSlice {
+  education: {
+    currentEducation: {
+      educationId: string;
+      startDate: {
+        month: number;
+        year: number;
+      };
+      monthsCompleted: number;
+    } | null;
+    availableEducations: Education[];
+  };
+  startEducation: (educationId: string) => boolean;
+  completeEducation: () => void;
+  progressEducation: () => void;
+}
+
 // Combined store type
 export type GameStore = PlayerSlice &
   JobsSlice &
@@ -154,7 +185,8 @@ export type GameStore = PlayerSlice &
   GoodsSlice &
   HistorySlice &
   TimeSlice &
-  InvestmentsSlice & {
+  InvestmentsSlice &
+  EducationSlice & {
     resetGame: () => void;
   };
 

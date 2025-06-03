@@ -1,22 +1,27 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Briefcase, Building, CreditCard, LineChart, ShoppingBag } from 'lucide-react';
+import { Briefcase, Building, CreditCard, GraduationCap, LineChart, ShoppingBag } from 'lucide-react';
 import { AssetsSection } from './assets-section';
 import { FinanceSection } from './finance-section';
 import { InvestmentsSection } from '@/components/game/investments-section';
 import { PlayerStatus } from './player-status';
 import { ShopSection } from './shop-section';
 import { WorkSection } from './work-section';
+import { EducationSection } from '@/components/game/education-section';
 
 export function GameDashboard() {
   return (
     <div className="w-full max-w-6xl mx-auto">
       <PlayerStatus />
 
-      <Tabs defaultValue="work" className="w-full">
-        <TabsList className="grid grid-cols-5 mb-4 bg-muted/50 backdrop-blur-sm border-muted/50 shadow-lg">
+      <Tabs defaultValue="education" className="w-full">
+        <TabsList className="grid grid-cols-6 mb-4 bg-muted/50 backdrop-blur-sm border-muted/50 shadow-lg">
           <TabsTrigger value="work" className="data-[state=active]:bg-primary/10">
             <Briefcase className="h-4 w-4 mr-2" />
             Werk
+          </TabsTrigger>
+          <TabsTrigger value="education" className="data-[state=active]:bg-primary/10">
+            <GraduationCap className="h-4 w-4 mr-2" />
+            Opleiding
           </TabsTrigger>
           <TabsTrigger value="shop" className="data-[state=active]:bg-primary/10">
             <ShoppingBag className="h-4 w-4 mr-2" />
@@ -38,6 +43,10 @@ export function GameDashboard() {
 
         <TabsContent value="work">
           <WorkSection />
+        </TabsContent>
+
+        <TabsContent value="education">
+          <EducationSection />
         </TabsContent>
 
         <TabsContent value="shop">

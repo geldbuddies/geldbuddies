@@ -5,6 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -13,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import useGameStore from '@/store/game/game-store';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 // Define starting scenarios
 const startingScenarios = [
@@ -94,67 +102,32 @@ export function CharacterSelect() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate name
-    if (!name.trim()) {
-      setNameError('Vul je naam in');
+    if (!name) {
+      toast.error('Vul een naam in');
       return;
     }
 
-    // Reset error states
-    setCustomMoneyError('');
-    setCustomBirthYearError('');
+    initializePlayer({
+      name,
+      birthMonth: parseInt(customBirthMonth),
+      birthYear: parseInt(customBirthYear),
+      money: 1000, // Start met €1000
+    });
 
-    // For custom scenario, validate custom values
-    if (selectedScenario === 'scenario-custom') {
-      const money = parseInt(customMoney);
-      const birthYear = parseInt(customBirthYear);
-
-      // Validate money
-      if (isNaN(money)) {
-        setCustomMoneyError('Vul een geldig bedrag in');
-        return;
-      }
-
-      // Validate birth year (between 1950 and current year)
-      const currentYear = new Date().getFullYear();
-      if (isNaN(birthYear) || birthYear < 1950 || birthYear > currentYear) {
-        setCustomBirthYearError(`Vul een geboortejaar in tussen 1950 en ${currentYear}`);
-        return;
-      }
-
-      // Initialize with custom values
-      initializePlayer({
-        name: name.trim(),
-        money: money,
-        birthMonth: parseInt(customBirthMonth),
-        birthYear: birthYear,
-      });
-      return;
-    }
-
-    // For predefined scenario
-    const scenario = startingScenarios.find((s) => s.id === selectedScenario);
-    if (scenario) {
-      initializePlayer({
-        name: name.trim(),
-        money: scenario.character.money,
-        birthMonth: scenario.character.birthMonth,
-        birthYear: scenario.character.birthYear,
-      });
-    }
+    toast.success('Karakter aangemaakt!');
   };
 
   const isCustomScenario = selectedScenario === 'scenario-custom';
 
   return (
-    <div className="fixed inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="w-full max-w-5xl">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold">Begin je financiële reis</h2>
-          <p className="text-muted-foreground mt-2">
+    <Dialog open={true}>
+      <DialogContent className="max-w-5xl">
+        <DialogHeader>
+          <DialogTitle>Begin je financiële reis</DialogTitle>
+          <DialogDescription>
             Vul je gegevens in en kies een scenario om te starten
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
@@ -271,7 +244,7 @@ export function CharacterSelect() {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
