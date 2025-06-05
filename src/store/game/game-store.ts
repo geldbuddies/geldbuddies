@@ -46,6 +46,8 @@ const resetGame = (set: any) => ({
               salary: 80000,
             },
           ],
+          hoursWorked: 0,
+          maxHoursWorked: 160,
         },
         assets: {
           owned: [],
@@ -69,20 +71,15 @@ const resetGame = (set: any) => ({
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  persist(
-    immer((...a) => ({
-      ...createPlayerSlice(...a),
-      ...createJobsSlice(...a),
-      ...createAssetsSlice(...a),
-      ...createGoodsSlice(...a),
-      ...createHistorySlice(...a),
-      ...createTimeSlice(...a),
-      ...resetGame(a[0]),
-    })),
-    {
-      name: 'geldbuddies-game-storage',
-    }
-  )
+  immer((...a) => ({
+    ...createPlayerSlice(...a),
+    ...createJobsSlice(...a),
+    ...createAssetsSlice(...a),
+    ...createGoodsSlice(...a),
+    ...createHistorySlice(...a),
+    ...createTimeSlice(...a),
+    ...resetGame(a[0]),
+  }))
 );
 
 export default useGameStore;
