@@ -7,6 +7,8 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
     birthMonth: 1,
     birthYear: 2000,
     isInitialized: false,
+    energy: 100,
+    maxEnergy: 100,
   },
 
   initializePlayer: (playerData) => {
@@ -17,6 +19,8 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
         birthMonth: playerData.birthMonth,
         birthYear: playerData.birthYear,
         isInitialized: true,
+        energy: 100,
+        maxEnergy: 100,
       };
     });
   },
@@ -38,5 +42,21 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
       return true;
     }
     return false;
+  },
+
+  useEnergy: (amount) => {
+    if (get().player.energy >= amount) {
+      set((state) => {
+        state.player.energy -= amount;
+      });
+      return true;
+    }
+    return false;
+  },
+
+  resetEnergy: () => {
+    set((state) => {
+      state.player.energy = state.player.maxEnergy;
+    });
   },
 });

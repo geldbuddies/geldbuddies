@@ -1,47 +1,60 @@
-import { getSessionCookie } from 'better-auth/cookies';
-import { betterFetch } from 'better-auth/react';
-import { Session } from 'better-auth/types';
+import type { auth } from '@/server/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  // Bypass all authentication checks in development
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
-  }
+type Session = typeof auth.$Infer.Session;
 
+// Protected routes that require authentication
+const protectedRoutes = ['/teacher', '/classroom', '/dashboard', '/profile', '/account'];
+
+export async function middleware(request: NextRequest) {
+  // Get the pathname from the request URL
   const path = request.nextUrl.pathname;
 
-  // Check if this is a protected route
-  const isTeacherRoute = path.startsWith('/teacher');
-  const isClassroomRoute = path.startsWith('/classroom');
+  // Check if the current path is in the protected routes
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => path === route || path.startsWith(`${route}/`)
+  );
 
-  if (isTeacherRoute || isClassroomRoute) {
-    const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
-      baseURL: request.nextUrl.origin,
-      headers: {
-        cookie: request.headers.get('cookie') || '', // Forward the cookies from the request
-      },
-    });
+  // Only for redirecting, this doesn't replace an auth check in pages or layouts
+  if (isProtectedRoute) {
+    try {
+      // Use standard fetch instead of betterFetch
+      const response = await fetch(`${request.nextUrl.origin}/api/auth/get-session`, {
+        headers: {
+          cookie: request.headers.get('cookie') || '', // Forward the cookies from the request
+        },
+      });
 
-    // If the user isn't authenticated
-    if (!session) {
-      // Redirect to the login page with a callback URL
-      const redirectUrl = new URL('/login', request.nextUrl.origin);
-      redirectUrl.searchParams.set('callbackUrl', encodeURI(request.nextUrl.pathname));
-      return NextResponse.redirect(redirectUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch session');
+      }
+
+      const { session } = (await response.json()) as { session: Session | null };
+
+      if (!session) {
+        // Create callback URL to redirect back after authentication
+        const callbackUrl = encodeURIComponent(request.url);
+        return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, request.url));
+      }
+    } catch (error) {
+      // If there's an error fetching the session, redirect to login
+      const callbackUrl = encodeURIComponent(request.url);
+      return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, request.url));
     }
-
-    // // Role-specific checks
-    // if (isTeacherRoute && session.user.role !== 'teacher') {
-    //   // If trying to access teacher routes without teacher role
-    //   return NextResponse.redirect(new URL('/unauthorized', request.nextUrl.origin));
-    // }
   }
 
   return NextResponse.next();
 }
 
-// Configure which routes should be handled by this middleware
 export const config = {
-  matcher: ['/teacher/:path*', '/classroom/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+  ],
 };

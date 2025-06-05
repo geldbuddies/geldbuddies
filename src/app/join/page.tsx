@@ -1,17 +1,17 @@
-import { ClassroomCodeEntry } from '@/components/classroom/code-entry';
+'use client';
 
-export const metadata = {
-  title: 'Join Classroom - GeldBuddies',
-  description: 'Join a classroom using a code to start learning about financial literacy.',
-};
+import { JoinForm } from './_components/join-form';
 
 export default function JoinPage() {
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">Join a Classroom</h1>
-        <ClassroomCodeEntry />
+    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="flex flex-col space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Join a Classroom</h1>
+          <p className="text-sm text-muted-foreground">Enter the code provided by your teacher</p>
+        </div>
+        <JoinForm />
       </div>
     </div>
   );
-} 
+}
