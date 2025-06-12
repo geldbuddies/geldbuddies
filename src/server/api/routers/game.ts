@@ -72,6 +72,31 @@ const gameDataSchema = z.object({
     year: z.number(),
     monthName: z.string(),
   }),
+  investments: z.object({
+    stocks: z.array(
+      z.object({
+        id: z.string(),
+        symbol: z.string(),
+        name: z.string(),
+        description: z.string(),
+        currentPrice: z.number(),
+        priceHistory: z.array(
+          z.object({
+            timestamp: z.number(),
+            price: z.number(),
+          })
+        ),
+      })
+    ),
+    portfolio: z.array(
+      z.object({
+        id: z.string(),
+        stockId: z.string(),
+        shares: z.number(),
+        averageBuyPrice: z.number(),
+      })
+    ),
+  }),
 });
 
 export const gameRouter = createTRPCRouter({

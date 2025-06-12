@@ -57,6 +57,25 @@ export type GameData = {
     year: number;
     monthName: string;
   };
+  investments: {
+    stocks: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      description: string;
+      currentPrice: number;
+      priceHistory: Array<{
+        timestamp: number;
+        price: number;
+      }>;
+    }>;
+    portfolio: Array<{
+      id: string;
+      stockId: string;
+      shares: number;
+      averageBuyPrice: number;
+    }>;
+  };
 };
 
 export const game = pgTable('game', {
