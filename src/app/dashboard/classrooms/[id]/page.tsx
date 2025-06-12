@@ -8,9 +8,9 @@ import { MembersList } from './_components/members-list';
 import { TurnTimer } from './_components/turn-timer';
 
 interface OrganizationPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function OrganizationPage({ params }: OrganizationPageProps) {

@@ -7,13 +7,13 @@ import { Fragment } from 'react';
 import { UsersList } from './_components/users-list';
 
 interface UsersPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function UsersPage({ params }: UsersPageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const organization = await api.organization.getOrganization({
     id,

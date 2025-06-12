@@ -1,17 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/trpc/server';
-import { ExternalLink, UserIcon, BarChart3 } from 'lucide-react';
+import { BarChart3, ExternalLink, UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Fragment } from 'react';
-import { UserDetails } from './_components/user-details';
 import { UserAnalysis } from './_components/analyse';
+import { UserDetails } from './_components/user-details';
 
 interface UserPageProps {
-  params: {
+  params: Promise<{
     id: string;
     userId: string;
-  };
+  }>;
 }
 
 export default async function UserPage({ params }: UserPageProps) {

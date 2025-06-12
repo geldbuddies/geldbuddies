@@ -7,9 +7,9 @@ import { OwnerView } from './_components/owner-view';
 import { WelcomeView } from './_components/welcome-view';
 
 interface JoinOrganizationPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function JoinOrganizationPage({ params }: JoinOrganizationPageProps) {

@@ -4,9 +4,9 @@ import { notFound, redirect } from 'next/navigation';
 import { GameView } from './_components/game-view';
 
 interface GamePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function GamePage({ params }: GamePageProps) {
