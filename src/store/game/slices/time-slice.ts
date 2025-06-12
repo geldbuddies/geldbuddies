@@ -1,4 +1,3 @@
-import { api } from '@/trpc/server';
 import { GameSlice, TimeSlice } from '../types';
 
 const MONTHS = [

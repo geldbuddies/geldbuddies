@@ -1,5 +1,4 @@
 import { StateCreator } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
 
 export type HistoryEvent = {
   id: string;

@@ -24,7 +24,7 @@ export function WelcomeView({ organizationId }: WelcomeViewProps) {
     if (organization && organization?.gameState !== 'not_started') {
       router.push(`/game/${organizationId}`);
     }
-  }, [organization?.gameState, router, organizationId]);
+  }, [organization, router, organizationId]);
 
   if (!organization) return null;
 

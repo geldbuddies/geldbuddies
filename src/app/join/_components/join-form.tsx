@@ -1,15 +1,5 @@
 'use client';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -19,14 +9,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { api, type RouterOutputs } from '@/trpc/react';
+import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -38,31 +27,14 @@ const formSchema = z.object({
   code: z.string().length(6, 'Join code moet 6 karakters lang zijn'),
 });
 
-const emailSchema = z.object({
-  email: z.string().email('Voer een geldig e-mailadres in'),
-  name: z.string().min(1, 'Naam is verplicht'),
-});
-
 export function JoinForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<
-    RouterOutputs['organization']['getOrganizationByJoinCode'] | null
-  >(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       code: '',
-    },
-  });
-
-  const emailForm = useForm<z.infer<typeof emailSchema>>({
-    resolver: zodResolver(emailSchema),
-    defaultValues: {
-      email: '',
-      name: '',
     },
   });
 
@@ -74,7 +46,7 @@ export function JoinForm() {
     }
   );
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit() {
     try {
       setIsLoading(true);
       const result = await refetch();
@@ -85,27 +57,12 @@ export function JoinForm() {
       } else {
         toast.error('Ongeldige join code');
       }
-    } catch (error) {
+    } catch {
       toast.error('Kon niet deelnemen aan de klas');
     } finally {
       setIsLoading(false);
     }
   }
-
-  async function onConfirmEmail(values: z.infer<typeof emailSchema>) {
-    if (!selectedOrg) return;
-
-    try {
-      setIsLoading(true);
-      // TODO: Handle email submission
-      router.push(`/join/${selectedOrg.id}`);
-    } catch (error) {
-      toast.error('Er ging iets mis bij het deelnemen');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   return (
     <Form {...form}>
       <form

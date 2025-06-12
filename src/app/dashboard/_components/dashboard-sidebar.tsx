@@ -1,9 +1,5 @@
 'use client';
 
-import { ArrowUpLeft, ChevronRight } from 'lucide-react';
-import * as React from 'react';
-
-import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
@@ -19,7 +15,9 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { api } from '@/trpc/react';
+import { ArrowUpLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import * as React from 'react';
 
 export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [organizations] = api.organization.getOrganizations.useSuspenseQuery();

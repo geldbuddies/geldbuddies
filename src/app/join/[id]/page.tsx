@@ -18,7 +18,7 @@ export default async function JoinOrganizationPage({ params }: JoinOrganizationP
 
   try {
     // Get organization and member info
-    const organization = await api.organization.getPublicOrganization({ id });
+    await api.organization.getPublicOrganization({ id });
     const member = session?.user
       ? await api.organization.getMemberByUserId({
           organizationId: id,
@@ -27,7 +27,7 @@ export default async function JoinOrganizationPage({ params }: JoinOrganizationP
       : null;
 
     if (!session?.user) {
-      return <EmailOTPForm organizationId={id} />;
+      return <EmailOTPForm />;
     }
 
     if (member?.role === 'owner') {
@@ -45,7 +45,7 @@ export default async function JoinOrganizationPage({ params }: JoinOrganizationP
     }
 
     return <WelcomeView organizationId={id} />;
-  } catch (error) {
+  } catch {
     notFound();
   }
 }

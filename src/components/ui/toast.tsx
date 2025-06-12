@@ -1,26 +1,24 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface ToastProps {
-  id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: React.ReactNode;
   duration?: number;
-  variant?: "default" | "destructive" | "success";
+  variant?: 'default' | 'destructive' | 'success';
   onClose?: () => void;
 }
 
 const Toast = ({
-  id,
   title,
   description,
   action,
   duration = 5000,
-  variant = "default",
+  variant = 'default',
   onClose,
 }: ToastProps) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -37,17 +35,17 @@ const Toast = ({
   }, [duration, onClose]);
 
   const variantClasses = {
-    default: "bg-white border border-gray-200 text-gray-900",
-    destructive: "bg-red-50 border-red-200 text-red-900",
-    success: "bg-green-50 border-green-200 text-green-900",
+    default: 'bg-white border border-gray-200 text-gray-900',
+    destructive: 'bg-red-50 border-red-200 text-red-900',
+    success: 'bg-green-50 border-green-200 text-green-900',
   };
 
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 z-50 max-w-md rounded-lg shadow-lg p-4 transform transition-all duration-300",
+        'fixed bottom-4 right-4 z-50 max-w-md rounded-lg shadow-lg p-4 transform transition-all duration-300',
         variantClasses[variant],
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
       )}
     >
       <div className="flex justify-between items-start">
@@ -67,4 +65,4 @@ const Toast = ({
   );
 };
 
-export { Toast, type ToastProps }; 
+export { Toast, type ToastProps };

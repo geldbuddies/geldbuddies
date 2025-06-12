@@ -29,7 +29,7 @@ export default async function LeaderboardPage({ params }: LeaderboardPageProps) 
     }
 
     return <LeaderboardView organizationId={id} />;
-  } catch (error) {
+  } catch {
     notFound();
   }
 }

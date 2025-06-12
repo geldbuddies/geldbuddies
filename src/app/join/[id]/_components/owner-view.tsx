@@ -36,7 +36,7 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
     if (organization && organization?.gameState !== 'not_started') {
       router.push(`/leaderboard/${organizationId}`);
     }
-  }, [organization?.gameState, router, organizationId]);
+  }, [organization, router, organizationId]);
 
   if (!organization) return null;
 
@@ -45,7 +45,7 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
       <section className="space-y-8">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-4xl font-bold tracking-tight">
-            Neem deel aan klas '{organization.name}'
+            Neem deel aan klas &apos;{organization.name}&apos;
           </h1>
 
           <p className="text-lg text-muted-foreground">

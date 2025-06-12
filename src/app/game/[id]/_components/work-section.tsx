@@ -11,6 +11,7 @@ export function WorkSection() {
   const handleWork = (hours: number) => {
     const energyCost = hours * 2; // 2 energy per hour worked
 
+    // eslint-disable-next-line
     if (useEnergy(energyCost)) {
       // Track hours worked this month for salary calculation
       addHoursWorked(hours);

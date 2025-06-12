@@ -3,7 +3,6 @@
 import { CharacterSelect } from '@/components/game/character-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { calculateAge } from '@/lib/utils';
 import useGameStore from '@/store/game/game-store';
@@ -21,7 +20,7 @@ export default function GamePage() {
         description: `Nieuwe levenssimulatie gestart in ${time.monthName} ${time.year}`,
       });
     }
-  }, []);
+  }, [time]);
 
   // Calculate net worth
   const calculateNetWorth = () => {

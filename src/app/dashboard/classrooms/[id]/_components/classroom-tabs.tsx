@@ -3,11 +3,7 @@ import { JoinTab } from './join-tab';
 import { SettingsTab } from './settings-tab';
 import { StudentsTab } from './students-tab';
 
-interface ClassroomTabsProps {
-  organizationName: string;
-}
-
-export function ClassroomTabs({ organizationName }: ClassroomTabsProps) {
+export function ClassroomTabs() {
   return (
     <Tabs defaultValue="join" className="w-full">
       <TabsList className="grid w-full grid-cols-3">

@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import useGameStore from '@/store/game/game-store';
 import { Battery } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface GameStatusProps {
   onEnergyAction: () => void;

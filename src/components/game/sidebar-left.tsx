@@ -19,7 +19,6 @@ import {
 import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useGameStore from '@/store/game/game-store';
-import { useState } from 'react';
 
 export default function SidebarLeft() {
   const { player, jobs, assets, goods } = useGameStore();

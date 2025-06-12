@@ -3,7 +3,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { api } from '@/trpc/react';
 import { Calendar } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -23,12 +22,11 @@ const MONTHS = [
 ];
 
 interface TurnTimerProps {
-  organizationId: string;
   gameState: 'not_started' | 'in_progress' | 'paused' | 'completed';
   createdAt: Date;
 }
 
-export function TurnTimer({ organizationId, gameState, createdAt }: TurnTimerProps) {
+export function TurnTimer({ gameState, createdAt }: TurnTimerProps) {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentDate, setCurrentDate] = useState('');
   const [secondsLeft, setSecondsLeft] = useState(90);

@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
         const callbackUrl = encodeURIComponent(request.url);
         return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, request.url));
       }
-    } catch (error) {
+    } catch {
       // If there's an error fetching the session, redirect to login
       const callbackUrl = encodeURIComponent(request.url);
       return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, request.url));

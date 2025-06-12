@@ -38,7 +38,7 @@ export function EmailForm({ onEmailSent }: EmailFormProps) {
   async function onSubmit(values: z.infer<typeof emailSchema>) {
     try {
       setIsLoading(true);
-      const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+      const { error } = await authClient.emailOtp.sendVerificationOtp({
         email: values.email,
         type: 'sign-in',
       });
@@ -50,7 +50,7 @@ export function EmailForm({ onEmailSent }: EmailFormProps) {
 
       onEmailSent(values.email);
       toast.success('Verificatiecode verstuurd naar je e-mail');
-    } catch (error) {
+    } catch {
       toast.error('Er ging iets mis bij het versturen van de code');
     } finally {
       setIsLoading(false);

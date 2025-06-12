@@ -9,7 +9,7 @@ export const createHistorySlice: GameSlice<HistorySlice> = (set, get) => ({
   addHistoryEvent: (event) =>
     set((state) => {
       // Get current game date
-      const { month, year, monthName } = get().time;
+      const { month, year } = get().time;
 
       // Create a timestamp that encodes the game date
       // We'll use a special format: use the year as 2xxx and month as mm

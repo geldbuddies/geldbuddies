@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { GameData } from '@/server/db/schemas/game-schema';
 import { api } from '@/trpc/react';
 import { Calendar, Trophy, UserIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';

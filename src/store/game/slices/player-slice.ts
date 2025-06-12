@@ -25,15 +25,13 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
     });
   },
 
-  addMoney: (amount, reason) => {
-    console.log('addMoney', amount, reason);
-
+  addMoney: (amount) => {
     set((state) => {
       state.player.money += amount;
     });
   },
 
-  spendMoney: (amount, reason) => {
+  spendMoney: (amount) => {
     if (get().player.money >= amount) {
       set((state) => {
         state.player.money -= amount;
