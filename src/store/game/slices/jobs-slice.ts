@@ -54,43 +54,6 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       return;
     }
 
-    // Check experience requirement
-    if (job.requirements.experience && job.requirements.experience > 0) {
-      const totalExperience =
-        player.workExperience?.reduce((total, exp) => {
-          if (!exp.endDate) {
-            const currentDate = { month: get().time.month, year: get().time.year };
-            return total + calculateExperienceYears(exp.startDate, currentDate);
-          }
-          return total + calculateExperienceYears(exp.startDate, exp.endDate);
-        }, 0) || 0;
-
-      if (totalExperience < job.requirements.experience) {
-        get().addHistoryEvent({
-          type: 'job',
-          description: `Sollicitatie afgewezen: Je hebt niet genoeg werkervaring (${job.requirements.experience} jaar vereist)`,
-        });
-        return;
-      }
-    }
-
-    // Check skills requirements
-    if (job.requirements.skills && job.requirements.skills.length > 0) {
-      const missingSkills = job.requirements.skills.filter(
-        (skill) => !player.skills?.includes(skill)
-      );
-
-      if (missingSkills.length > 0) {
-        get().addHistoryEvent({
-          type: 'job',
-          description: `Sollicitatie afgewezen: Je mist de volgende vaardigheden: ${missingSkills.join(
-            ', '
-          )}`,
-        });
-        return;
-      }
-    }
-
     // All requirements met, proceed with hiring
     set((state) => {
       state.jobs.currentJob = job;
