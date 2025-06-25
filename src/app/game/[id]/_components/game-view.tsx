@@ -41,7 +41,6 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     player,
     history,
     time,
-    consumeEnergy,
     resetEnergy,
     initializePlayer,
     advanceMonth,
@@ -92,7 +91,10 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
   const [secondsLeft, setSecondsLeft] = useState(90);
 
   useEffect(() => {
+    console.log('Timer useEffect running, dependencies:', { organization: !!organization, gameId });
+
     if (!organization || organization.gameState !== 'in_progress') {
+      console.log('Timer useEffect early return - no organization or not in progress');
       return;
     }
 
@@ -105,9 +107,11 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     // Sync the store time with organization creation date plus elapsed months
     const targetDate = new Date(organization.createdAt);
     targetDate.setMonth(targetDate.getMonth() + currentMonth);
-    syncTimeWithOrganization(targetDate);
+    useGameStore.getState().syncTimeWithOrganization(targetDate);
 
+    console.log('Setting up timer interval');
     const interval = setInterval(() => {
+      console.log('Timer tick');
       const now = new Date();
       const gameStartTime = new Date(organization.createdAt);
       const elapsedSeconds = Math.floor((now.getTime() - gameStartTime.getTime()) / 1000);
@@ -129,7 +133,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
 
       // Handle month transition
       if (secondsInCurrentMonth === 0 && elapsedSeconds > 0) {
-        advanceMonth();
+        useGameStore.getState().advanceMonth();
 
         // Get the updated game state after advanceMonth() has run
         const updatedGameState = useGameStore.getState();
@@ -165,16 +169,11 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
       }
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [
-    organization,
-    advanceMonth,
-    history.events,
-    syncTimeWithOrganization,
-    time,
-    gameId,
-    saveGameData,
-  ]);
+    return () => {
+      console.log('Timer useEffect cleanup - clearing interval');
+      clearInterval(interval);
+    };
+  }, [organization, gameId]);
 
   // Auto-close month summary dialog after 30 seconds
   useEffect(() => {
