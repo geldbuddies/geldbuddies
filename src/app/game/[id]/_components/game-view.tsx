@@ -41,6 +41,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     player,
     history,
     time,
+    consumeEnergy,
     resetEnergy,
     initializePlayer,
     advanceMonth,
@@ -62,7 +63,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
   useEffect(() => {
     if (!player.isInitialized) {
       initializePlayer({
-        money: 1000,
+        money: 2000,
         name: 'Player',
         birthMonth: 1,
         birthYear: 2000,
@@ -70,23 +71,19 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     }
   }, [player.isInitialized, initializePlayer]);
 
-  // Save game data when energy reaches 0
+  // Energy regeneration: +1 energy per second
   useEffect(() => {
-    if (player.energy === 0) {
-      const gameData = useGameStore.getState();
-      saveGameData.mutate({
-        id: gameId,
-        gameData: {
-          player: gameData.player,
-          jobs: gameData.jobs,
-          assets: gameData.assets,
-          goods: gameData.goods,
-          history: gameData.history,
-          time: gameData.time,
-        },
-      });
-    }
-  }, [player.energy, gameId, saveGameData]);
+    const energyInterval = setInterval(() => {
+      const currentState = useGameStore.getState();
+      if (currentState.player.energy < currentState.player.maxEnergy) {
+        useGameStore.setState((state) => {
+          state.player.energy = Math.min(state.player.energy + 1, state.player.maxEnergy);
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(energyInterval);
+  }, []);
 
   const [isMonthSummaryOpen, setIsMonthSummaryOpen] = useState(false);
   const [currentMonthEvents, setCurrentMonthEvents] = useState<typeof history.events>([]);
@@ -99,8 +96,16 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
       return;
     }
 
-    // Sync the store time with organization creation date
-    syncTimeWithOrganization(new Date(organization.createdAt));
+    // Calculate initial game time based on elapsed time since organization creation
+    const now = new Date();
+    const gameStartTime = new Date(organization.createdAt);
+    const elapsedSeconds = Math.floor((now.getTime() - gameStartTime.getTime()) / 1000);
+    const currentMonth = Math.floor(elapsedSeconds / 90);
+
+    // Sync the store time with organization creation date plus elapsed months
+    const targetDate = new Date(organization.createdAt);
+    targetDate.setMonth(targetDate.getMonth() + currentMonth);
+    syncTimeWithOrganization(targetDate);
 
     const interval = setInterval(() => {
       const now = new Date();
@@ -126,12 +131,17 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
       if (secondsInCurrentMonth === 0 && elapsedSeconds > 0) {
         advanceMonth();
 
-        // Get the current game time for filtering events
+        // Get the updated game state after advanceMonth() has run
+        const updatedGameState = useGameStore.getState();
+
+        // Get the current game time for filtering events (use the OLD time for filtering since we want events from the month that just ended)
         const currentGameTime = time.year * 10000 + time.month * 100;
         const nextGameTime = time.year * 10000 + (time.month + 1) * 100;
 
-        // Filter events for the current month
-        const monthEvents = history.events.filter(
+        console.log(currentGameTime, nextGameTime, updatedGameState.history.events);
+
+        // Filter events for the current month using the updated history
+        const monthEvents = updatedGameState.history.events.filter(
           (event) => event.timestamp >= currentGameTime && event.timestamp < nextGameTime
         );
 
@@ -146,6 +156,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
             goods: gameData.goods,
             history: gameData.history,
             time: gameData.time,
+            investments: gameData.investments,
           },
         });
 

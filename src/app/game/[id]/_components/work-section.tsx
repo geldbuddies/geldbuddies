@@ -4,15 +4,14 @@ import useGameStore from '@/store/game/game-store';
 import { toast } from 'sonner';
 
 export function WorkSection() {
-  const { player, jobs, useEnergy, addHoursWorked, addHistoryEvent, applyForJob, quitJob } =
+  const { player, jobs, consumeEnergy, addHoursWorked, addHistoryEvent, applyForJob, quitJob } =
     useGameStore();
 
   // Function to handle working at current job
   const handleWork = (hours: number) => {
     const energyCost = hours * 2; // 2 energy per hour worked
 
-    // eslint-disable-next-line
-    if (useEnergy(energyCost)) {
+    if (consumeEnergy(energyCost)) {
       // Track hours worked this month for salary calculation
       addHoursWorked(hours);
 
@@ -130,11 +129,7 @@ export function WorkSection() {
                     <p className="text-muted-foreground">{job.company}</p>
                     <p className="mt-1">€{job.salary.toLocaleString()}/jaar</p>
                   </div>
-                  <Button
-                    onClick={() => applyForJob(job.id)}
-                    disabled={!!jobs.currentJob}
-                    className="bg-primary/10 hover:bg-primary/20"
-                  >
+                  <Button onClick={() => applyForJob(job.id)} disabled={!!jobs.currentJob}>
                     Solliciteren
                   </Button>
                 </div>

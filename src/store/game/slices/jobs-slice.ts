@@ -1,43 +1,88 @@
+import { jobs as availableJobs } from '@/data/jobs';
+import { calculateAge } from '@/lib/utils';
 import { GameSlice, JobsSlice } from '../types';
 
 export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
   jobs: {
     currentJob: null,
-    availableJobs: [
-      {
-        id: '1',
-        title: 'Winkelmedewerker',
-        company: 'SuperMarkt',
-        salary: 25000,
-      },
-      {
-        id: '2',
-        title: 'Kantoorassistent',
-        company: 'Zakelijk B.V.',
-        salary: 35000,
-      },
-      {
-        id: '3',
-        title: 'Software Ontwikkelaar',
-        company: 'Tech Innovaties',
-        salary: 80000,
-      },
-    ],
+    availableJobs,
     hoursWorked: 0,
     maxHoursWorked: 160,
+    filters: {
+      search: '',
+      category: 'all',
+      level: 'all',
+      minSalary: 0,
+      location: '',
+    },
+  },
+
+  setJobFilters: (filters) => {
+    set((state) => {
+      state.jobs.filters = { ...state.jobs.filters, ...filters };
+    });
   },
 
   applyForJob: (jobId) => {
     const job = get().jobs.availableJobs.find((j) => j.id === jobId);
     if (!job) return;
 
+    // Check if player meets requirements
+    const player = get().player;
+    const playerAge = calculateAge(
+      player.birthMonth,
+      player.birthYear,
+      get().time.month,
+      get().time.year
+    );
+
+    // Check age requirement
+    if (job.requirements.minAge && playerAge < job.requirements.minAge) {
+      get().addHistoryEvent({
+        type: 'job',
+        description: `Sollicitatie afgewezen: Je bent te jong voor deze functie (minimum leeftijd: ${job.requirements.minAge})`,
+      });
+      return;
+    }
+
+    // Check education requirement
+    if (job.requirements.education && !player.education?.includes(job.requirements.education)) {
+      get().addHistoryEvent({
+        type: 'job',
+        description: `Sollicitatie afgewezen: Je hebt niet de juiste opleiding (${job.requirements.education})`,
+      });
+      return;
+    }
+
+    // All requirements met, proceed with hiring
     set((state) => {
-      state.jobs.currentJob = {
+      state.jobs.currentJob = job;
+      state.jobs.hoursWorked = 0;
+
+      // Add to work experience
+      if (!state.player.workExperience) {
+        state.player.workExperience = [];
+      }
+
+      // If player has a current job, end it
+      const currentExperience = state.player.workExperience.find((exp) => !exp.endDate);
+      if (currentExperience) {
+        currentExperience.endDate = {
+          month: get().time.month,
+          year: get().time.year,
+        };
+      }
+
+      // Add new job to experience
+      state.player.workExperience.push({
+        jobId: job.id,
         title: job.title,
         company: job.company,
-        salary: job.salary,
-      };
-      state.jobs.hoursWorked = 0;
+        startDate: {
+          month: get().time.month,
+          year: get().time.year,
+        },
+      });
     });
 
     // Add to history
@@ -54,6 +99,15 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       set((state) => {
         state.jobs.currentJob = null;
         state.jobs.hoursWorked = 0;
+
+        // Update work experience end date
+        const currentExperience = state.player.workExperience?.find((exp) => !exp.endDate);
+        if (currentExperience) {
+          currentExperience.endDate = {
+            month: get().time.month,
+            year: get().time.year,
+          };
+        }
       });
 
       // Add to history
@@ -66,13 +120,10 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
 
   addHoursWorked: (hours) => {
     if (!get().jobs.currentJob) return false;
-    console.log(hours);
 
     set((state) => {
       state.jobs.hoursWorked = Math.min(state.jobs.hoursWorked + hours, state.jobs.maxHoursWorked);
     });
-
-    console.log(get().jobs.hoursWorked, get().jobs.maxHoursWorked);
 
     return true;
   },
@@ -86,14 +137,10 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       const hourlyRate = currentJob.salary / (12 * get().jobs.maxHoursWorked);
       const monthlySalary = Math.round(hourlyRate * hoursWorked);
 
-      get().addMoney(monthlySalary, `Salaris van ${currentJob.company}`);
-
-      // Add to history
-      get().addHistoryEvent({
-        type: 'transaction',
-        description: `Salaris ontvangen voor ${hoursWorked} uur werk bij ${currentJob.company}`,
-        amount: monthlySalary,
-      });
+      get().addMoney(
+        monthlySalary,
+        `Salaris ontvangen voor ${hoursWorked} uur werk bij ${currentJob.company}`
+      );
 
       // Reset work hours for the new month
       set((state) => {
