@@ -1,5 +1,4 @@
 import { calculateAge } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
 import { Education, EducationSlice, GameSlice } from '../types';
 
 // Available educations
@@ -151,7 +150,7 @@ export const createEducationSlice: GameSlice<EducationSlice> = (set, get) => ({
     if (!education) return;
 
     // Check if player has enough energy
-    if (!get().useEnergy(education.energyCost)) {
+    if (!get().consumeEnergy(education.energyCost)) {
       return;
     }
 

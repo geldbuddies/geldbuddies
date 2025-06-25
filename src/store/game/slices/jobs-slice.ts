@@ -149,13 +149,3 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
     }
   },
 });
-
-// Helper function to calculate years of experience between two dates
-function calculateExperienceYears(
-  startDate: { month: number; year: number },
-  endDate: { month: number; year: number }
-) {
-  const yearDiff = endDate.year - startDate.year;
-  const monthDiff = endDate.month - startDate.month;
-  return yearDiff + monthDiff / 12;
-}

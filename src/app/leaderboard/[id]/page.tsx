@@ -4,9 +4,9 @@ import { notFound, redirect } from 'next/navigation';
 import { LeaderboardView } from './_components/leaderboard-view';
 
 interface LeaderboardPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function LeaderboardPage({ params }: LeaderboardPageProps) {
@@ -29,7 +29,7 @@ export default async function LeaderboardPage({ params }: LeaderboardPageProps) 
     }
 
     return <LeaderboardView organizationId={id} />;
-  } catch (error) {
+  } catch {
     notFound();
   }
 }

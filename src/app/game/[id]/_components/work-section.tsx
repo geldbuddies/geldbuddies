@@ -4,14 +4,14 @@ import useGameStore from '@/store/game/game-store';
 import { toast } from 'sonner';
 
 export function WorkSection() {
-  const { player, jobs, useEnergy, addHoursWorked, addHistoryEvent, applyForJob, quitJob } =
+  const { player, jobs, consumeEnergy, addHoursWorked, addHistoryEvent, applyForJob, quitJob } =
     useGameStore();
 
   // Function to handle working at current job
   const handleWork = (hours: number) => {
     const energyCost = hours * 2; // 2 energy per hour worked
 
-    if (useEnergy(energyCost)) {
+    if (consumeEnergy(energyCost)) {
       // Track hours worked this month for salary calculation
       addHoursWorked(hours);
 

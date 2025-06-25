@@ -46,7 +46,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     goods,
     history,
     time,
-    useEnergy,
+    consumeEnergy,
     resetEnergy,
     resetGame,
     initializePlayer,

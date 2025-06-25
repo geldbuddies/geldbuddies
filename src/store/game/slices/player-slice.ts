@@ -59,7 +59,7 @@ export const createPlayerSlice: GameSlice<PlayerSlice> = (set, get) => ({
     return true;
   },
 
-  useEnergy: (amount) => {
+  consumeEnergy: (amount) => {
     if (get().player.energy < amount) return false;
 
     set((state) => {

@@ -7,10 +7,10 @@ import { Fragment } from 'react';
 import { UserDetails } from './_components/user-details';
 
 interface UserPageProps {
-  params: {
+  params: Promise<{
     id: string;
     userId: string;
-  };
+  }>;
 }
 
 export default async function UserPage({ params }: UserPageProps) {

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { JobCategory, JobLevel } from '@/data/jobs';
-import useGameStore from '@/store/game/game-store';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,9 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+import { JobCategory, JobLevel } from '@/data/jobs';
 import { calculateAge } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
+import useGameStore from '@/store/game/game-store';
+import { useState } from 'react';
 import { JobDetailsDialog } from './job-details-dialog';
 
 export function JobsSection() {
@@ -29,7 +29,8 @@ export function JobsSection() {
       job.company.toLowerCase().includes(jobs.filters.search.toLowerCase()) ||
       job.description.toLowerCase().includes(jobs.filters.search.toLowerCase());
 
-    const matchesCategory = jobs.filters.category === 'all' || job.category === jobs.filters.category;
+    const matchesCategory =
+      jobs.filters.category === 'all' || job.category === jobs.filters.category;
     const matchesLevel = jobs.filters.level === 'all' || job.level === jobs.filters.level;
     const matchesSalary = job.salary >= jobs.filters.minSalary;
     const matchesLocation =
@@ -44,19 +45,21 @@ export function JobsSection() {
 
   // Calculate total work experience
   const calculateTotalExperience = () => {
-    return player.workExperience?.reduce((total, exp) => {
-      if (!exp.endDate) {
-        const currentDate = { month: time.month, year: time.year };
+    return (
+      player.workExperience?.reduce((total, exp) => {
+        if (!exp.endDate) {
+          const currentDate = { month: time.month, year: time.year };
+          return (
+            total +
+            (currentDate.year - exp.startDate.year + (currentDate.month - exp.startDate.month) / 12)
+          );
+        }
         return (
           total +
-          (currentDate.year - exp.startDate.year + (currentDate.month - exp.startDate.month) / 12)
+          (exp.endDate.year - exp.startDate.year + (exp.endDate.month - exp.startDate.month) / 12)
         );
-      }
-      return (
-        total +
-        (exp.endDate.year - exp.startDate.year + (exp.endDate.month - exp.startDate.month) / 12)
-      );
-    }, 0) || 0;
+      }, 0) || 0
+    );
   };
 
   const totalExperience = calculateTotalExperience();
@@ -73,21 +76,6 @@ export function JobsSection() {
     // Check education
     if (job.requirements.education && !player.education?.includes(job.requirements.education)) {
       requirements.push(`Opleiding: ${job.requirements.education}`);
-    }
-
-    // Check experience
-    if (job.requirements.experience && job.requirements.experience > totalExperience) {
-      requirements.push(`Werkervaring: ${job.requirements.experience} jaar`);
-    }
-
-    // Check skills
-    if (job.requirements.skills && job.requirements.skills.length > 0) {
-      const missingSkills = job.requirements.skills.filter(
-        (skill) => !player.skills?.includes(skill)
-      );
-      if (missingSkills.length > 0) {
-        requirements.push(`Skills: ${missingSkills.join(', ')}`);
-      }
     }
 
     return requirements;
@@ -259,27 +247,6 @@ export function JobsSection() {
                             Opleiding: {job.requirements.education}
                           </Badge>
                         )}
-                        {job.requirements.experience !== undefined && job.requirements.experience > 0 && (
-                          <Badge
-                            variant={
-                              totalExperience < job.requirements.experience ? 'destructive' : 'outline'
-                            }
-                          >
-                            Ervaring: {job.requirements.experience} jaar
-                          </Badge>
-                        )}
-                        {job.requirements.skills && job.requirements.skills.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {job.requirements.skills.map((skill) => (
-                              <Badge
-                                key={skill}
-                                variant={!player.skills?.includes(skill) ? 'destructive' : 'outline'}
-                              >
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -292,12 +259,8 @@ export function JobsSection() {
 
       {/* Job Details Dialog */}
       {selectedJob && (
-        <JobDetailsDialog
-          job={selectedJob}
-          isOpen={true}
-          onClose={() => setSelectedJob(null)}
-        />
+        <JobDetailsDialog job={selectedJob} isOpen={true} onClose={() => setSelectedJob(null)} />
       )}
     </div>
   );
-} 
+}

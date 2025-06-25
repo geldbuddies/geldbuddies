@@ -35,25 +35,26 @@ export function AssetsSection() {
           <div className="space-y-4">
             {assets.owned.length > 0 ? (
               assets.owned.map((asset) => (
-                <div key={asset.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={asset.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <Building className="h-5 w-5 text-blue-500" />
                     <div>
                       <p className="font-medium">{asset.name}</p>
-                      <p className="text-sm text-muted-foreground">{asset.description}</p>
+                      <p className="text-sm text-muted-foreground">{asset.type}</p>
                     </div>
                   </div>
                   <p className="font-medium">€{asset.value.toLocaleString()}</p>
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground text-center py-4">
-                Je hebt nog geen bezittingen
-              </p>
+              <p className="text-muted-foreground text-center py-4">Je hebt nog geen bezittingen</p>
             )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
-} 
+}

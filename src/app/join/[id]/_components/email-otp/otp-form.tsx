@@ -74,7 +74,7 @@ export function OTPForm({ email, organizationId }: OTPFormProps) {
   }
 
   if (isNewUser) {
-    return <NameForm email={email} organizationId={organizationId} />;
+    return <NameForm />;
   }
 
   return (

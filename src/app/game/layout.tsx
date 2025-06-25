@@ -1,4 +1,3 @@
-import SidebarLeft from '@/components/game/sidebar-left';
 import SidebarRight from '@/components/game/sidebar-right';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 

@@ -1,17 +1,17 @@
-import { getServerSession } from '@/server/auth/utils';
-import { notFound, redirect } from 'next/navigation';
 import { createGameIfNotExists } from '@/app/game/actions/create-game'; // jouw server action voor game aanmaken
+import { getServerSession } from '@/server/auth/utils';
 import { api } from '@/trpc/server'; // voorlopig nog TRPC voor member ophalen
+import { notFound, redirect } from 'next/navigation';
 import { GameView } from './_components/game-view';
 
 interface GamePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const { id } = params; // let op: params is al een object, geen await nodig
+  const { id } = await params;
   const session = await getServerSession();
 
   if (!session?.user) {

@@ -1,6 +1,5 @@
-import { StateCreator } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
 import { Job, JobCategory, JobLevel } from '@/data/jobs';
+import { StateCreator } from 'zustand';
 
 export type HistoryEvent = {
   id: string;
@@ -38,7 +37,7 @@ export interface PlayerSlice {
   }) => void;
   addMoney: (amount: number, reason: string) => void;
   spendMoney: (amount: number, reason: string) => boolean;
-  useEnergy: (amount: number) => boolean;
+  consumeEnergy: (amount: number) => boolean;
   resetEnergy: () => void;
 }
 
