@@ -3,7 +3,6 @@
 import { Button, type buttonVariants } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
-import { auth } from '@/server/auth';
 import { type VariantProps } from 'class-variance-authority';
 import { useRouter } from 'next/navigation';
 

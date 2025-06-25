@@ -7,8 +7,6 @@ import { useEffect, useState } from 'react';
 interface MonthSummaryDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  month: string;
-  year: number;
   events: Array<{
     id: string;
     type: 'transaction' | 'job' | 'asset' | 'good' | 'life';
@@ -18,13 +16,7 @@ interface MonthSummaryDialogProps {
   }>;
 }
 
-export function MonthSummaryDialog({
-  isOpen,
-  onClose,
-  month,
-  year,
-  events,
-}: MonthSummaryDialogProps) {
+export function MonthSummaryDialog({ isOpen, onClose, events }: MonthSummaryDialogProps) {
   const [timeLeft, setTimeLeft] = useState(30);
   const [startTime, setStartTime] = useState<number | null>(null);
 

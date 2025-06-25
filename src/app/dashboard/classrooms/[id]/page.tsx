@@ -4,7 +4,6 @@ import { api } from '@/trpc/server';
 import { ExternalLink, Users } from 'lucide-react';
 import Link from 'next/link';
 import { GameControls } from './_components/game-controls';
-import { Leaderboard } from './_components/leaderboard';
 import { MembersList } from './_components/members-list';
 import { TurnTimer } from './_components/turn-timer';
 
@@ -56,7 +55,6 @@ export default async function OrganizationPage({ params }: OrganizationPageProps
             </Card>
 
             <TurnTimer
-              organizationId={id}
               gameState={
                 organization.gameState as 'not_started' | 'in_progress' | 'paused' | 'completed'
               }

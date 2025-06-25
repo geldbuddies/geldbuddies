@@ -1,10 +1,8 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { authClient } from '@/lib/auth-client';
 import useGameStore from '@/store/game/game-store';
 import { api } from '@/trpc/react';
-import { Gamepad2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { GameDashboard } from './game-dashboard';
@@ -41,14 +39,10 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
   // Initialize game store
   const {
     player,
-    jobs,
-    assets,
-    goods,
     history,
     time,
     consumeEnergy,
     resetEnergy,
-    resetGame,
     initializePlayer,
     advanceMonth,
     syncTimeWithOrganization,
@@ -172,7 +166,15 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [organization, advanceMonth, history.events, syncTimeWithOrganization, time]);
+  }, [
+    organization,
+    advanceMonth,
+    history.events,
+    syncTimeWithOrganization,
+    time,
+    gameId,
+    saveGameData,
+  ]);
 
   // Auto-close month summary dialog after 30 seconds
   useEffect(() => {
@@ -205,8 +207,6 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
       <MonthSummaryDialog
         isOpen={isMonthSummaryOpen}
         onClose={() => setIsMonthSummaryOpen(false)}
-        month={time.monthName}
-        year={time.year}
         events={currentMonthEvents}
       />
     </main>

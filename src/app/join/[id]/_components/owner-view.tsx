@@ -36,7 +36,7 @@ export function OwnerView({ organizationId }: OwnerViewProps) {
     if (organization && organization?.gameState !== 'not_started') {
       router.push(`/leaderboard/${organizationId}`);
     }
-  }, [organization?.gameState, router, organizationId]);
+  }, [organization, router, organizationId]);
 
   if (!organization) return null;
 

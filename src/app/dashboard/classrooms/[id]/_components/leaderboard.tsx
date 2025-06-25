@@ -2,16 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { api } from '@/trpc/react';
 import { useEffect, useState } from 'react';
 
 interface LeaderboardProps {
-  organizationId: string;
   gameState: 'not_started' | 'in_progress' | 'paused' | 'completed';
   createdAt: Date;
 }
 
-export function Leaderboard({ organizationId, gameState, createdAt }: LeaderboardProps) {
+export function Leaderboard({ gameState, createdAt }: LeaderboardProps) {
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [turnCount, setTurnCount] = useState<number>(0);
 

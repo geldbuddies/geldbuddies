@@ -29,12 +29,10 @@ const otpSchema = z.object({
 
 interface OTPFormProps {
   email: string;
-  organizationId: string;
 }
 
-export function OTPForm({ email, organizationId }: OTPFormProps) {
+export function OTPForm({ email }: OTPFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
 
   const form = useForm<z.infer<typeof otpSchema>>({
@@ -46,7 +44,6 @@ export function OTPForm({ email, organizationId }: OTPFormProps) {
 
   async function onVerifyOTP(otp: string) {
     try {
-      setIsLoading(true);
       const { data, error } = await authClient.signIn.emailOtp({
         email,
         otp,
@@ -66,10 +63,8 @@ export function OTPForm({ email, organizationId }: OTPFormProps) {
 
       toast.success('Succesvol ingelogd');
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error('Er ging iets mis bij het verifiëren van de code');
-    } finally {
-      setIsLoading(false);
     }
   }
 

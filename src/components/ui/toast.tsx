@@ -5,7 +5,6 @@ import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 interface ToastProps {
-  id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: React.ReactNode;
@@ -15,7 +14,6 @@ interface ToastProps {
 }
 
 const Toast = ({
-  id,
   title,
   description,
   action,
