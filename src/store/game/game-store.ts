@@ -1,6 +1,6 @@
 // src/store/useGameStore.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Import slices
@@ -86,17 +86,23 @@ const resetGame = (set: any) => ({
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  immer((...a) => ({
-    ...createPlayerSlice(...a),
-    ...createJobsSlice(...a),
-    ...createAssetsSlice(...a),
-    ...createGoodsSlice(...a),
-    ...createHistorySlice(...a),
-    ...createTimeSlice(...a),
-    ...createInvestmentsSlice(...a),
-    ...createEducationSlice(...a),
-    ...resetGame(a[0]),
-  }))
+  persist(
+    immer((...a) => ({
+      ...createPlayerSlice(...a),
+      ...createJobsSlice(...a),
+      ...createAssetsSlice(...a),
+      ...createGoodsSlice(...a),
+      ...createHistorySlice(...a),
+      ...createTimeSlice(...a),
+      ...createInvestmentsSlice(...a),
+      ...createEducationSlice(...a),
+      ...resetGame(a[0]),
+    })),
+    {
+      name: 'game-store',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 );
 
 export default useGameStore;

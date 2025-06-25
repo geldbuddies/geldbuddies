@@ -12,8 +12,6 @@ export type JobLevel = 'entry' | 'junior' | 'medior' | 'senior';
 export type JobRequirements = {
   minAge?: number;
   education?: string;
-  experience?: number;
-  skills?: string[];
 };
 
 export type Job = {
@@ -40,9 +38,7 @@ export const jobs: Job[] = [
     description: 'Start je carrière als software developer in een innovatief bedrijf.',
     requirements: {
       minAge: 18,
-      education: 'MBO/HBO Informatica of vergelijkbaar',
-      experience: 0,
-      skills: ['HTML', 'CSS', 'JavaScript'],
+      education: 'hbo',
     },
     location: 'Utrecht',
   },
@@ -56,9 +52,7 @@ export const jobs: Job[] = [
     description: 'Ontwikkel complexe web applicaties in een modern tech stack.',
     requirements: {
       minAge: 18,
-      education: 'HBO/WO Informatica',
-      experience: 3,
-      skills: ['React', 'Node.js', 'TypeScript', 'SQL'],
+      education: 'wo',
     },
     location: 'Amsterdam',
   },
@@ -72,9 +66,7 @@ export const jobs: Job[] = [
     description: 'Lead technische beslissingen en mentor junior developers.',
     requirements: {
       minAge: 18,
-      education: 'HBO/WO Informatica',
-      experience: 5,
-      skills: ['Architecture', 'Cloud', 'Team Leadership'],
+      education: 'master',
     },
     location: 'Rotterdam',
   },
@@ -90,9 +82,7 @@ export const jobs: Job[] = [
     description: 'Start je carrière in financiële administratie.',
     requirements: {
       minAge: 18,
-      education: 'MBO/HBO Accountancy',
-      experience: 0,
-      skills: ['Excel', 'Boekhouden'],
+      education: 'mbo',
     },
     location: 'Den Haag',
   },
@@ -106,9 +96,7 @@ export const jobs: Job[] = [
     description: 'Verantwoordelijk voor financiële rapportages en analyses.',
     requirements: {
       minAge: 18,
-      education: 'HBO/WO Financieel',
-      experience: 3,
-      skills: ['Financial Analysis', 'Reporting', 'SAP'],
+      education: 'hbo',
     },
     location: 'Amsterdam',
   },
@@ -124,7 +112,6 @@ export const jobs: Job[] = [
     description: 'Help klanten en zorg voor een nette winkel.',
     requirements: {
       minAge: 16,
-      experience: 0,
     },
     location: 'Landelijk',
   },
@@ -138,9 +125,7 @@ export const jobs: Job[] = [
     description: 'Leiding geven aan een team van winkelmedewerkers.',
     requirements: {
       minAge: 18,
-      education: 'MBO Retail',
-      experience: 2,
-      skills: ['Leidinggeven', 'Planning', 'Retail ervaring'],
+      education: 'mbo',
     },
     location: 'Landelijk',
   },
@@ -156,9 +141,7 @@ export const jobs: Job[] = [
     description: 'Zorg voor patiënten in een dynamische ziekenhuisomgeving.',
     requirements: {
       minAge: 18,
-      education: 'HBO Verpleegkunde',
-      experience: 0,
-      skills: ['Patiëntenzorg', 'Medicatie', 'EHBO'],
+      education: 'hbo',
     },
     location: 'Utrecht',
   },
@@ -174,9 +157,7 @@ export const jobs: Job[] = [
     description: 'Lesgeven aan groep 5-8 van de basisschool.',
     requirements: {
       minAge: 18,
-      education: 'PABO',
-      experience: 0,
-      skills: ['Pedagogiek', 'Didactiek'],
+      education: 'hbo',
     },
     location: 'Rotterdam',
   },
@@ -192,9 +173,6 @@ export const jobs: Job[] = [
     description: 'Serveren van drankjes en gerechten in ons café.',
     requirements: {
       minAge: 16,
-      education: 'Geen specifieke eisen',
-      experience: 0,
-      skills: ['Klantvriendelijk', 'Teamwork'],
     },
     location: 'Amsterdam',
   },
@@ -210,9 +188,7 @@ export const jobs: Job[] = [
     description: 'Ontwerp visuele content voor diverse klanten.',
     requirements: {
       minAge: 18,
-      education: 'MBO/HBO Design',
-      experience: 0,
-      skills: ['Adobe Creative Suite', 'UI/UX', 'Typography'],
+      education: 'mbo',
     },
     location: 'Amsterdam',
   },

@@ -69,7 +69,7 @@ export function GameView({ gameId, organizationId }: GameViewProps) {
   useEffect(() => {
     if (!player.isInitialized) {
       initializePlayer({
-        money: 1000,
+        money: 2000,
         name: 'Player',
         birthMonth: 1,
         birthYear: 2000,

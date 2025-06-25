@@ -5,7 +5,7 @@ import { Education, EducationSlice, GameSlice } from '../types';
 // Available educations
 export const availableEducations: Education[] = [
   {
-    id: 'edu_mbo',
+    id: 'mbo',
     name: 'MBO Opleiding',
     description: 'Een praktijkgerichte MBO opleiding',
     duration: 24, // 2 jaar
@@ -16,7 +16,7 @@ export const availableEducations: Education[] = [
     },
   },
   {
-    id: 'edu_hbo',
+    id: 'hbo',
     name: 'HBO Bachelor',
     description: 'Een HBO bachelor opleiding',
     duration: 48, // 4 jaar
@@ -27,7 +27,7 @@ export const availableEducations: Education[] = [
     },
   },
   {
-    id: 'edu_wo',
+    id: 'wo',
     name: 'WO Bachelor',
     description: 'Een universitaire bachelor opleiding',
     duration: 36, // 3 jaar
@@ -38,7 +38,7 @@ export const availableEducations: Education[] = [
     },
   },
   {
-    id: 'edu_master',
+    id: 'master',
     name: 'WO Master',
     description: 'Een universitaire master opleiding',
     duration: 24, // 2 jaar
@@ -46,7 +46,7 @@ export const availableEducations: Education[] = [
     energyCost: 50,
     requirements: {
       minAge: 21,
-      education: ['edu_wo'],
+      education: ['wo'],
     },
   },
 ];
@@ -155,16 +155,30 @@ export const createEducationSlice: GameSlice<EducationSlice> = (set, get) => ({
       return;
     }
 
-    // Progress education
-    set((state) => {
-      if (state.education.currentEducation) {
-        state.education.currentEducation.monthsCompleted++;
+    // Check if education will be completed after this progress
+    const willComplete = currentEducation.monthsCompleted + 1 >= education.duration;
 
-        // Check if education is completed
-        if (state.education.currentEducation.monthsCompleted >= education.duration) {
-          get().completeEducation();
+    if (willComplete) {
+      // Complete the education
+      set((state) => {
+        if (!state.player.education.includes(education.id)) {
+          state.player.education.push(education.id);
         }
-      }
-    });
+        state.education.currentEducation = null;
+      });
+
+      // Add completion history event
+      get().addHistoryEvent({
+        type: 'life',
+        description: `${education.name} afgerond!`,
+      });
+    } else {
+      // Just progress education
+      set((state) => {
+        if (state.education.currentEducation) {
+          state.education.currentEducation.monthsCompleted++;
+        }
+      });
+    }
   },
 });
