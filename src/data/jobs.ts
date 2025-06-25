@@ -12,7 +12,7 @@ export type JobLevel = 'entry' | 'junior' | 'medior' | 'senior';
 export type JobRequirements = {
   minAge?: number;
   education?: string;
-  experience?: number; // in years
+  experience?: number;
   skills?: string[];
 };
 
@@ -124,9 +124,7 @@ export const jobs: Job[] = [
     description: 'Help klanten en zorg voor een nette winkel.',
     requirements: {
       minAge: 16,
-      education: 'Geen specifieke eisen',
       experience: 0,
-      skills: ['Klantvriendelijk', 'Teamwork'],
     },
     location: 'Landelijk',
   },
@@ -218,4 +216,4 @@ export const jobs: Job[] = [
     },
     location: 'Amsterdam',
   },
-]; 
+];

@@ -24,6 +24,18 @@ export const createTimeSlice: GameSlice<TimeSlice> = (set, get) => ({
   },
 
   advanceMonth: () => {
+    // Collect salary
+    get().collectSalary();
+
+    // Update stock prices
+    get().updateStockPrices();
+
+    // Pay monthly costs
+    get().payMonthlyCosts();
+
+    // Reset energy
+    get().resetEnergy();
+
     // Update time
     set((state) => {
       if (state.time.month === 12) {
@@ -34,15 +46,6 @@ export const createTimeSlice: GameSlice<TimeSlice> = (set, get) => ({
       }
       state.time.monthName = MONTHS[state.time.month - 1];
     });
-
-    // Update stock prices
-    get().updateStockPrices();
-
-    // Pay monthly costs
-    get().payMonthlyCosts();
-
-    // Reset energy
-    get().resetEnergy();
 
     // Add to history
     get().addHistoryEvent({

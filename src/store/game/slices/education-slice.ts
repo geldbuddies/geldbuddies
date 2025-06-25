@@ -1,6 +1,6 @@
+import { calculateAge } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { Education, EducationSlice, GameSlice } from '../types';
-import { calculateAge } from '@/lib/utils';
 
 // Available educations
 export const availableEducations: Education[] = [
@@ -61,9 +61,6 @@ export const createEducationSlice: GameSlice<EducationSlice> = (set, get) => ({
     const education = availableEducations.find((e) => e.id === educationId);
     if (!education) return false;
 
-    // Check if already in education
-    if (get().education.currentEducation) return false;
-
     // Check requirements
     const player = get().player;
     const playerAge = calculateAge(
@@ -96,6 +93,10 @@ export const createEducationSlice: GameSlice<EducationSlice> = (set, get) => ({
 
     // Check if player has enough money
     if (!get().spendMoney(education.cost, `${education.name} inschrijving`)) {
+      get().addHistoryEvent({
+        type: 'life',
+        description: `Opleiding niet gestart: Je hebt niet genoeg geld`,
+      });
       return false;
     }
 
@@ -166,4 +167,4 @@ export const createEducationSlice: GameSlice<EducationSlice> = (set, get) => ({
       }
     });
   },
-}); 
+});

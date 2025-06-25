@@ -5,7 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 
 // Import slices
 import { createAssetsSlice } from './slices/assets-slice';
-import { createEducationSlice, availableEducations } from './slices/education-slice';
+import { availableEducations, createEducationSlice } from './slices/education-slice';
 import { createGoodsSlice } from './slices/goods-slice';
 import { createHistorySlice } from './slices/history-slice';
 import { createInvestmentsSlice, initialStocks } from './slices/investments-slice';
@@ -86,32 +86,17 @@ const resetGame = (set: any) => ({
 
 // Create main store with all slices
 const useGameStore = create<GameStore>()(
-  persist(
-    immer((...a) => ({
-      ...createPlayerSlice(...a),
-      ...createJobsSlice(...a),
-      ...createAssetsSlice(...a),
-      ...createGoodsSlice(...a),
-      ...createHistorySlice(...a),
-      ...createTimeSlice(...a),
-      ...createInvestmentsSlice(...a),
-      ...createEducationSlice(...a),
-      ...resetGame(a[0]),
-    })),
-    {
-      name: 'game-storage',
-      partialize: (state) => ({
-        player: state.player,
-        jobs: state.jobs,
-        assets: state.assets,
-        goods: state.goods,
-        history: state.history,
-        time: state.time,
-        investments: state.investments,
-        education: state.education,
-      }),
-    }
-  )
+  immer((...a) => ({
+    ...createPlayerSlice(...a),
+    ...createJobsSlice(...a),
+    ...createAssetsSlice(...a),
+    ...createGoodsSlice(...a),
+    ...createHistorySlice(...a),
+    ...createTimeSlice(...a),
+    ...createInvestmentsSlice(...a),
+    ...createEducationSlice(...a),
+    ...resetGame(a[0]),
+  }))
 );
 
 export default useGameStore;

@@ -52,17 +52,19 @@ export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) =>
   },
 
   buyShares: (stockId, shares) => {
-    const stock = get().investments.stocks.find(s => s.id === stockId);
+    const stock = get().investments.stocks.find((s) => s.id === stockId);
     if (!stock) return false;
 
     const totalCost = stock.currentPrice * shares;
     if (get().spendMoney(totalCost, `Aandelen gekocht in ${stock.name}`)) {
-      set(state => {
-        const existingPosition = state.investments.portfolio.find(p => p.stockId === stockId);
+      set((state) => {
+        const existingPosition = state.investments.portfolio.find((p) => p.stockId === stockId);
         if (existingPosition) {
           // Update existing position
           const totalShares = existingPosition.shares + shares;
-          const totalCostBasis = (existingPosition.shares * existingPosition.averageBuyPrice) + (shares * stock.currentPrice);
+          const totalCostBasis =
+            existingPosition.shares * existingPosition.averageBuyPrice +
+            shares * stock.currentPrice;
           existingPosition.shares = totalShares;
           existingPosition.averageBuyPrice = totalCostBasis / totalShares;
         } else {
@@ -89,18 +91,20 @@ export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) =>
   },
 
   sellShares: (portfolioId, shares) => {
-    const position = get().investments.portfolio.find(p => p.id === portfolioId);
+    const position = get().investments.portfolio.find((p) => p.id === portfolioId);
     if (!position || position.shares < shares) return false;
 
-    const stock = get().investments.stocks.find(s => s.id === position.stockId);
+    const stock = get().investments.stocks.find((s) => s.id === position.stockId);
     if (!stock) return false;
 
     const totalValue = stock.currentPrice * shares;
-    
-    set(state => {
+
+    set((state) => {
       if (position.shares === shares) {
         // Remove position entirely
-        state.investments.portfolio = state.investments.portfolio.filter(p => p.id !== portfolioId);
+        state.investments.portfolio = state.investments.portfolio.filter(
+          (p) => p.id !== portfolioId
+        );
       } else {
         // Update position
         position.shares -= shares;
@@ -123,33 +127,33 @@ export const createInvestmentsSlice: GameSlice<InvestmentsSlice> = (set, get) =>
   updateStockPrices: () => {
     const time = get().time;
     const currentTimestamp = new Date(time.year, time.month - 1).getTime();
-    
-    set(state => {
-      state.investments.stocks.forEach(stock => {
-        // More realistic monthly price movement between -15% and +20%
-        const changePercent = (Math.random() * 0.35) - 0.15;
+
+    set((state) => {
+      state.investments.stocks.forEach((stock) => {
+        // Monthly price movement between -5% and +10%
+        const changePercent = Math.random() * 0.15 - 0.05;
         const newPrice = Math.max(1, Math.round(stock.currentPrice * (1 + changePercent)));
-        
+
         // Only add to price history if this timestamp doesn't exist yet
         const hasCurrentTimestamp = stock.priceHistory.some(
-          entry => entry.timestamp === currentTimestamp
+          (entry) => entry.timestamp === currentTimestamp
         );
-        
+
         if (!hasCurrentTimestamp) {
           // Add to price history with game time
           stock.priceHistory.push({
             timestamp: currentTimestamp,
             price: stock.currentPrice,
           });
-          
+
           // Keep only last 24 months of data points
           if (stock.priceHistory.length > 24) {
             stock.priceHistory.shift();
           }
-          
+
           stock.currentPrice = newPrice;
         }
       });
     });
   },
-}); 
+});

@@ -1,6 +1,6 @@
-import { GameSlice, JobsSlice } from '../types';
 import { jobs as availableJobs } from '@/data/jobs';
 import { calculateAge } from '@/lib/utils';
+import { GameSlice, JobsSlice } from '../types';
 
 export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
   jobs: {
@@ -29,7 +29,12 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
 
     // Check if player meets requirements
     const player = get().player;
-    const playerAge = calculateAge(player.birthMonth, player.birthYear, get().time.month, get().time.year);
+    const playerAge = calculateAge(
+      player.birthMonth,
+      player.birthYear,
+      get().time.month,
+      get().time.year
+    );
 
     // Check age requirement
     if (job.requirements.minAge && playerAge < job.requirements.minAge) {
@@ -51,13 +56,14 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
 
     // Check experience requirement
     if (job.requirements.experience && job.requirements.experience > 0) {
-      const totalExperience = player.workExperience?.reduce((total, exp) => {
-        if (!exp.endDate) {
-          const currentDate = { month: get().time.month, year: get().time.year };
-          return total + calculateExperienceYears(exp.startDate, currentDate);
-        }
-        return total + calculateExperienceYears(exp.startDate, exp.endDate);
-      }, 0) || 0;
+      const totalExperience =
+        player.workExperience?.reduce((total, exp) => {
+          if (!exp.endDate) {
+            const currentDate = { month: get().time.month, year: get().time.year };
+            return total + calculateExperienceYears(exp.startDate, currentDate);
+          }
+          return total + calculateExperienceYears(exp.startDate, exp.endDate);
+        }, 0) || 0;
 
       if (totalExperience < job.requirements.experience) {
         get().addHistoryEvent({
@@ -77,7 +83,9 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       if (missingSkills.length > 0) {
         get().addHistoryEvent({
           type: 'job',
-          description: `Sollicitatie afgewezen: Je mist de volgende vaardigheden: ${missingSkills.join(', ')}`,
+          description: `Sollicitatie afgewezen: Je mist de volgende vaardigheden: ${missingSkills.join(
+            ', '
+          )}`,
         });
         return;
       }
@@ -166,14 +174,10 @@ export const createJobsSlice: GameSlice<JobsSlice> = (set, get) => ({
       const hourlyRate = currentJob.salary / (12 * get().jobs.maxHoursWorked);
       const monthlySalary = Math.round(hourlyRate * hoursWorked);
 
-      get().addMoney(monthlySalary, `Salaris van ${currentJob.company}`);
-
-      // Add to history
-      get().addHistoryEvent({
-        type: 'transaction',
-        description: `Salaris ontvangen voor ${hoursWorked} uur werk bij ${currentJob.company}`,
-        amount: monthlySalary,
-      });
+      get().addMoney(
+        monthlySalary,
+        `Salaris ontvangen voor ${hoursWorked} uur werk bij ${currentJob.company}`
+      );
 
       // Reset work hours for the new month
       set((state) => {

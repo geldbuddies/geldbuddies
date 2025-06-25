@@ -129,11 +129,7 @@ export function WorkSection() {
                     <p className="text-muted-foreground">{job.company}</p>
                     <p className="mt-1">€{job.salary.toLocaleString()}/jaar</p>
                   </div>
-                  <Button
-                    onClick={() => applyForJob(job.id)}
-                    disabled={!!jobs.currentJob}
-                    className="bg-primary/10 hover:bg-primary/20"
-                  >
+                  <Button onClick={() => applyForJob(job.id)} disabled={!!jobs.currentJob}>
                     Solliciteren
                   </Button>
                 </div>
