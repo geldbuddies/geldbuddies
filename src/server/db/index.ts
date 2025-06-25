@@ -1,51 +1,29 @@
-import 'dotenv/config'
-import { drizzle } from 'drizzle-orm/node-postgres'
-import { Pool } from 'pg'
-import * as schema from './schemas'
+import { neon, neonConfig } from '@neondatabase/serverless';
+import 'dotenv/config';
+import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http';
+import * as schema from './schemas';
 
 // Read from environment variables
-const connectionString = process.env.DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is not set')
+  throw new Error('DATABASE_URL environment variable is not set');
 }
 
-// Create a PostgreSQL connection pool with better settings for development
-const pool = new Pool({
-  connectionString,
-  max: 10, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
-  connectionTimeoutMillis: 5000, // How long to wait for a connection to become available
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false
-})
+// Configure Neon for different environments
+if (process.env.NODE_ENV === 'development') {
+  // For local development, use direct connection to Docker database
+  // The DATABASE_URL from .env will be used directly
 
-// Add error handler for unexpected pool errors
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle PostgreSQL client', err)
-  process.exit(-1)
-})
-
-// Test connection when starting the app
-const testConnection = async () => {
-  const client = await pool.connect()
-  try {
-    await client.query('SELECT NOW()')
-    console.log('PostgreSQL connection successful')
-  } catch (err) {
-    console.error('PostgreSQL connection error:', err)
-    throw err
-  } finally {
-    client.release()
-  }
+  // Configure Neon proxy settings for local development
+  neonConfig.fetchEndpoint = (host) => {
+    const [protocol, port] = host === 'db.localtest.me' ? ['http', 4444] : ['https', 443];
+    return `${protocol}://${host}:${port}/sql`;
+  };
 }
 
-// Run the test but don't block app startup
-testConnection().catch(err => {
-  console.error('Database connection test failed:', err)
-})
+const sql = neon(connectionString);
+const db = drizzleNeon(sql, { schema });
 
-// Create and export the database connection
-export const db = drizzle(pool, { schema })
-
-// Export pool for direct SQL queries if needed
-export { pool }
+// Export the database connection
+export { db };
